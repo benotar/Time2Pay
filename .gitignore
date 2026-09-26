@@ -480,3 +480,31 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+.claude
+
+# =========================
+# Vite / Frontend (React)
+# =========================
+
+node_modules/
+dist/
+dist-ssr/
+.vite/
+.vite-temp/
+
+# env files (Vite)
+.env
+.env.*
+!.env.example
+
+# logs (Node tools)
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# optional cache
+.eslintcache
+
+# Local Docker container data
+.containers/
