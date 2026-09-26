@@ -1,0 +1,40 @@
+﻿services:
+  time2pay:
+    image: ${DOCKER_REGISTRY-}time2pay
+    build:
+      context: .
+      dockerfile: src/Time2Pay.Api/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      # Seq
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://time2pay.seq:5341/ingest/otlp
+      - OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
+      # Aspire Dashboard
+      # - OTEL_EXPORTER_OTLP_ENDPOINT=http://devhabit.aspire-dashboard:18889
+      # - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
+    ports:
+      - '5228:8080'
+      - '5229:8081'
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+  
+  time2pay.seq:
+    image: datalust/seq:2026.1.17182
+    environment:
+      ACCEPT_EULA: "Y"
+      SEQ_FIRSTRUN_NOAUTHENTICATION: "true"
+    volumes:
+      - ./.containers/seq_data:/data
+    ports:
+      - '8080:80'
+      - '5341:5341'
+  
+  time2pay.aspire-dashboard:
+    image: mcr.microsoft.com/dotnet/aspire-dashboard:13
+    environment:
+      DOTNET_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS: true
+    ports:
+      - '18888:18888'
