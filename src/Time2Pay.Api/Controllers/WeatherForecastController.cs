@@ -23,12 +23,14 @@ public class WeatherForecastController : ControllerBase
     public IEnumerable<WeatherForecast> Get()
     {
         _logger.LogInformation("Fetching weather forecast");
-        return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+        return
+        [
+            .. Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
                 Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
                 TemperatureC = RandomNumberGenerator.GetInt32(-20, 55),
                 Summary = Summaries[RandomNumberGenerator.GetInt32(Summaries.Length)]
             })
-            .ToArray();
+        ];
     }
 }

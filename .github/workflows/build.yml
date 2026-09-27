@@ -1,0 +1,39 @@
+name: Build
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DOTNET_VERSION: "10.x"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore
+        run: dotnet restore Time2Pay.slnx
+
+      - name: Build
+        run: dotnet build Time2Pay.slnx --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test Time2Pay.slnx --configuration Release --no-restore --no-build
+
+      - name: Publish
+        run: dotnet publish Time2Pay.slnx --configuration Release --no-restore --no-build
