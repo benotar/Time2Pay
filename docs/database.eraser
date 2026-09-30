@@ -1,0 +1,92 @@
+users [icon: user, color: blue] {
+  id uuid pk
+  display_name text
+  time_zone text
+  created_at timestamptz
+  updated_at timestamptz
+}
+
+employments [icon: briefcase, color: blue] {
+  id uuid pk
+  user_id uuid
+  name text
+  started_on date
+  ended_on date
+  created_at timestamptz
+  updated_at timestamptz
+}
+
+compensation_rates [icon: dollar-sign, color: green] {
+  id uuid pk
+  employment_id uuid
+  rate_type text
+  amount numeric(12,2)
+  currency char(3)
+  valid_from date
+  valid_to date
+  created_at timestamptz
+  updated_at timestamptz
+}
+
+work_days [icon: sun, color: purple] {
+  id uuid pk
+  employment_id uuid
+  work_date date
+  day_type text
+  started_at timestamptz
+  ended_at timestamptz
+  duration_minutes int
+  break_minutes int
+  note text
+  created_at timestamptz
+  updated_at timestamptz
+}
+
+payments [icon: credit-card, color: green] {
+  id uuid pk
+  employment_id uuid
+  paid_on date
+  amount numeric(12,2)
+  currency char(3)
+  payment_method text
+  period_start date
+  period_end date
+  note text
+  created_at timestamptz
+  updated_at timestamptz
+}
+
+exchange_rates [icon: trending-up, color: green] {
+  month date pk
+  rate numeric(10,4)
+  created_at timestamptz
+  updated_at timestamptz
+}
+
+exchange_rate_caps [icon: shield, color: green] {
+  id uuid pk
+  rate numeric(10,4)
+  valid_from date
+  valid_to date
+  created_at timestamptz
+  updated_at timestamptz
+}
+
+calendar [icon: grid, color: gray] {
+  date date pk
+  year int
+  half_year int
+  quarter int
+  month int
+  iso_year int
+  iso_week int
+  iso_weekday int
+  is_weekend boolean
+  is_public_holiday boolean
+}
+
+employments.user_id > users.id
+compensation_rates.employment_id > employments.id
+work_days.employment_id > employments.id
+payments.employment_id > employments.id
+work_days.work_date > calendar.date

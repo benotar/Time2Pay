@@ -7,6 +7,11 @@
         <File Path="Directory.Build.props"/>
         <File Path="Directory.Packages.props"/>
     </Folder>
+    <Folder Name="/Solution Items/Docs/">
+        <File Path="docs/database.eraser"/>
+        <File Path="docs/database.md"/>
+        <File Path="docs/database.png"/>
+    </Folder>
     <Folder Name="/src/">
         <Project Path="src/Time2Pay.Api/Time2Pay.Api.csproj"/>
     </Folder>

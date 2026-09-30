@@ -9,17 +9,28 @@
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
       # Seq
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://time2pay.seq:5341/ingest/otlp
-      - OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
+      # - OTEL_EXPORTER_OTLP_ENDPOINT=http://time2pay.seq:5341/ingest/otlp
+      # - OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
       # Aspire Dashboard
-      # - OTEL_EXPORTER_OTLP_ENDPOINT=http://devhabit.aspire-dashboard:18889
-      # - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://time2pay.aspire-dashboard:18889
+      - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
     ports:
       - '5228:8080'
       - '5229:8081'
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+  
+  time2pay.postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: time2pay
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./containers/postgres_data:/var/lib/postgresql/18/docker
+    ports:
+      - '5432:5432'
   
   time2pay.seq:
     image: datalust/seq:2026.1.17182
