@@ -28,7 +28,7 @@
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     volumes:
-      - ./containers/postgres_data:/var/lib/postgresql/18/docker
+      - postgres_data:/var/lib/postgresql/18/docker
     ports:
       - '5432:5432'
   
@@ -38,7 +38,7 @@
       ACCEPT_EULA: "Y"
       SEQ_FIRSTRUN_NOAUTHENTICATION: "true"
     volumes:
-      - ./.containers/seq_data:/data
+      - seq_data:/data
     ports:
       - '8080:80'
       - '5341:5341'
@@ -49,3 +49,4 @@
       DOTNET_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS: true
     ports:
       - '18888:18888'
+      - '18889:18889'

@@ -6,6 +6,7 @@
         <File Path="compose.yaml"/>
         <File Path="Directory.Build.props"/>
         <File Path="Directory.Packages.props"/>
+        <File Path="docker-postgres-aspiredashboard.ps1"/>
     </Folder>
     <Folder Name="/Solution Items/Docs/">
         <File Path="docs/database.eraser"/>
