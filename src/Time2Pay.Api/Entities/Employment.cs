@@ -1,9 +1,9 @@
 ﻿namespace Time2Pay.Api.Entities;
 
-public class Employment : AuditEntity
+public sealed class Employment : AuditEntity
 {
-    public string UserId { get; set; }
-    public string Name { get; set; }
-    public DateOnly StartedOn { get; set; }
-    public DateOnly? EndedOn { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string? Description { get; set; }
+    public DateOnly StartDate { get; set; }
+    public DateOnly? EndDate { get; set; }
 }

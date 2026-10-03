@@ -50,3 +50,7 @@
     ports:
       - '18888:18888'
       - '18889:18889'
+  
+volumes:
+  postgres_data:
+  seq_data:

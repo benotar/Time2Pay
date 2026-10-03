@@ -1,24 +1,27 @@
 <Solution>
     <Folder Name="/solution-items/">
-        <File Path=".editorconfig"/>
-        <File Path=".gitignore"/>
-        <File Path="Directory.Build.props"/>
-        <File Path="Directory.Packages.props"/>
+        <File Path=".editorconfig" />
+        <File Path=".gitignore" />
+        <File Path="Directory.Build.props" />
+        <File Path="Directory.Packages.props" />
     </Folder>
     <Folder Name="/docker/">
-        <File Path=".dockerignore"/>
-        <File Path="compose.yaml"/>
-        <File Path="dev-infra.ps1"/>
+        <File Path=".dockerignore" />
+        <File Path="compose.yaml" />
+    </Folder>
+    <Folder Name="/scripts/">
+        <File Path="scripts/dev-infra.ps1" />
+        <File Path="scripts/ef.ps1" />
     </Folder>
     <Folder Name="/workflows/">
-        <File Path=".github/workflows/build.yml"/>
+        <File Path=".github/workflows/build.yml" />
     </Folder>
     <Folder Name="/docs/">
-        <File Path="docs/database.eraser"/>
-        <File Path="docs/database.md"/>
-        <File Path="docs/database.png"/>
+        <File Path="docs/database.eraser" />
+        <File Path="docs/database.md" />
+        <File Path="docs/database.png" />
     </Folder>
     <Folder Name="/src/">
-        <Project Path="src/Time2Pay.Api/Time2Pay.Api.csproj"/>
+        <Project Path="src/Time2Pay.Api/Time2Pay.Api.csproj" />
     </Folder>
 </Solution>

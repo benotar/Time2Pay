@@ -9,7 +9,7 @@ public static class DatabaseExtensions
     {
         using var scope = app.Services.CreateScope();
 
-        await using var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        await using var dbContext = scope.ServiceProvider.GetRequiredService<Time2PayDbContext>();
 
         try
         {

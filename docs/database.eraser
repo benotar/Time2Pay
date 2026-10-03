@@ -1,19 +1,19 @@
 users [icon: user, color: blue] {
   id uuid pk
   display_name text
-  time_zone text
-  created_at timestamptz
-  updated_at timestamptz
+  created_at_utc timestamptz
+  last_modified_at_utc timestamptz
 }
 
 employments [icon: briefcase, color: blue] {
   id uuid pk
   user_id uuid
   name text
-  started_on date
-  ended_on date
-  created_at timestamptz
-  updated_at timestamptz
+  description text
+  start_date date
+  end_date date
+  created_at_utc timestamptz
+  last_modified_at_utc timestamptz
 }
 
 compensation_rates [icon: dollar-sign, color: green] {
@@ -22,45 +22,45 @@ compensation_rates [icon: dollar-sign, color: green] {
   rate_type text
   amount numeric(12,2)
   currency char(3)
-  valid_from date
-  valid_to date
-  created_at timestamptz
-  updated_at timestamptz
+  valid_from_date date
+  valid_to_date date
+  created_at_utc timestamptz
+  last_modified_at_utc timestamptz
 }
 
 work_days [icon: sun, color: purple] {
   id uuid pk
   employment_id uuid
-  work_date date
+  date date
   day_type text
-  started_at timestamptz
-  ended_at timestamptz
+  started_at time
+  ended_at time
   duration_minutes int
   break_minutes int
-  note text
-  created_at timestamptz
-  updated_at timestamptz
+  comment text
+  created_at_utc timestamptz
+  last_modified_at_utc timestamptz
 }
 
 payments [icon: credit-card, color: green] {
   id uuid pk
   employment_id uuid
-  paid_on date
+  paid_date date
   amount numeric(12,2)
   currency char(3)
   payment_method text
-  period_start date
-  period_end date
-  note text
-  created_at timestamptz
-  updated_at timestamptz
+  period_start_date date
+  period_end_date date
+  comment text
+  created_at_utc timestamptz
+  last_modified_at_utc timestamptz
 }
 
 exchange_rates [icon: trending-up, color: green] {
   month date pk
   rate numeric(10,4)
-  created_at timestamptz
-  updated_at timestamptz
+  created_at_utc timestamptz
+  last_modified_at_utc timestamptz
 }
 
 exchange_rate_caps [icon: shield, color: green] {
@@ -68,8 +68,8 @@ exchange_rate_caps [icon: shield, color: green] {
   rate numeric(10,4)
   valid_from date
   valid_to date
-  created_at timestamptz
-  updated_at timestamptz
+  created_at_utc timestamptz
+  last_modified_at_utc timestamptz
 }
 
 calendar [icon: grid, color: gray] {
@@ -89,4 +89,4 @@ employments.user_id > users.id
 compensation_rates.employment_id > employments.id
 work_days.employment_id > employments.id
 payments.employment_id > employments.id
-work_days.work_date > calendar.date
+work_days.date > calendar.date

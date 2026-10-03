@@ -2,6 +2,7 @@
 
 public enum RateType
 {
-    Hourly = 0,
-    Monthly = 1
+    None = 0,
+    Hourly = 1,
+    Monthly = 2
 }

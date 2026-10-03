@@ -28,14 +28,15 @@ A user's job. One user can have several jobs.
 | `id`                                      | Job identifier                               |
 | `user_id`                                 | Owner of the job → `users.id`                |
 | `name`                                    | Display name to tell jobs apart              |
-| `started_on`                              | Employment start date                        |
-| `ended_on`                                | Employment end date. `NULL` = still employed |
+| `description`                             | Description. `NULL`                          |
+| `start_date`                              | Employment start date                        |
+| `end_date`                                | Employment end date. `NULL` = still employed |
 | `created_at_utc` / `last_modified_at_utc` | Audit                                        |
 
 ## compensation_rates
 
-A job's pay rate with change history. When the rate changes, the current row gets a `valid_to` and a new row is created,
-so past periods are always calculated at the rate that applied at the time.
+A job's pay rate with change history. When the rate changes, the current row gets a `valid_to_date` and a new row is
+created, so past periods are always calculated at the rate that applied at the time.
 
 | Field                                     | Description                                             |
 |-------------------------------------------|---------------------------------------------------------|
@@ -44,11 +45,11 @@ so past periods are always calculated at the rate that applied at the time.
 | `rate_type`                               | `hourly` — per hour, `monthly` — fixed amount per month |
 | `amount`                                  | Rate amount, `numeric(12,2)`                            |
 | `currency`                                | Rate currency, `UAH` or `USD`                           |
-| `valid_from`                              | Date the rate takes effect                              |
-| `valid_to`                                | Last date the rate applied. `NULL` = still in effect    |
+| `valid_from_date`                         | Date the rate takes effect                              |
+| `valid_to_date`                           | Last date the rate applied. `NULL` = still in effect    |
 | `created_at_utc` / `last_modified_at_utc` | Audit                                                   |
 
-**Constraints:** `valid_from`…`valid_to` ranges must not overlap for the same job.
+**Constraints:** `valid_from_date`…`valid_to_date` ranges must not overlap for the same job.
 
 ## work_days
 
@@ -58,19 +59,19 @@ An actual work day: when the person started, when they finished, and how long th
 |-------------------------------------------|---------------------------------------------------------------------------------|
 | `id`                                      | Identifier                                                                      |
 | `employment_id`                           | Job → `employments.id`                                                          |
-| `work_date`                               | Local date (based on `users.time_zone`)                                         |
-| `day_type`                                | `workday`, `vacation`, `sick_leave`, `day_off`                                  |
+| `date`                                    | Date picked by the person, in the app time zone (`Europe/Kyiv`)                 |
+| `day_type`                                | `work`, `vacation`, `sick_leave`, `day_off`                                     |
 | `started_at`                              | Actual start time. `NULL` if no work that day                                   |
 | `ended_at`                                | Actual end time. `NULL` if no work that day                                     |
 | `break_minutes`                           | Unpaid break in minutes. `0` if there is no break                               |
 | `duration_minutes`                        | Paid minutes. Computed by the database: `ended_at − started_at − break_minutes` |
-| `note`                                    | Free-text note                                                                  |
+| `comment`                                 | Free-text note                                                                  |
 | `created_at_utc` / `last_modified_at_utc` | Audit                                                                           |
 
 **Constraints:**
 
-- `employment_id` + `work_date` is unique;
-- a `workday` has `started_at` and `ended_at`; other day types do not;
+- `employment_id` + `date` is unique;
+- a `work` day has `started_at` and `ended_at`; other day types do not;
 - `ended_at` is later than `started_at`; `break_minutes` ≥ 0.
 
 ## payments
@@ -81,15 +82,15 @@ An actual payment: every receipt of money is a separate row.
 |-------------------------------------------|----------------------------------------------------------------------------------|
 | `id`                                      | Identifier                                                                       |
 | `employment_id`                           | Paying job → `employments.id`                                                    |
-| `paid_on`                                 | Date the money was received                                                      |
+| `paid_date`                               | Date the money was received                                                      |
 | `amount`                                  | Amount, `numeric(12,2)`                                                          |
 | `currency`                                | Payment currency                                                                 |
 | `payment_method`                          | `cash` or `card`                                                                 |
-| `period_start` / `period_end`             | Work period the payment covers. Required. May not match a calendar week or month |
-| `note`                                    | Free-text note                                                                   |
+| `period_start_date` / `period_end_date`   | Work period the payment covers. Required. May not match a calendar week or month |
+| `comment`                                 | Free-text note                                                                   |
 | `created_at_utc` / `last_modified_at_utc` | Audit                                                                            |
 
-**Constraints:** `period_start` and `period_end` are `NOT NULL`; `period_end` ≥ `period_start`.
+**Constraints:** `period_start_date` and `period_end_date` are `NOT NULL`; `period_end_date` ≥ `period_start_date`.
 
 ## exchange_rates
 
