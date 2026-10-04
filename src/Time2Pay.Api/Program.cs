@@ -1,25 +1,21 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql;
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Time2Pay.Api;
-using Time2Pay.Api.Database;
 using Time2Pay.Api.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.ReturnHttpNotAcceptable = true;
+});
 
 builder.Services.AddOpenApi();
 
-builder.Services.AddDbContext<Time2PayDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("Database"),
-            npgsqlOptions => npgsqlOptions.MigrationsHistoryTable(HistoryRepository.DefaultTableName,
-                Constants.ApplicationSchema))
-        .UseSnakeCaseNamingConvention());
+builder.Services.AddDatabase();
 
 builder.Services.AddOpenTelemetry()
     .ConfigureResource(resource => resource.AddService(builder.Environment.ApplicationName))
