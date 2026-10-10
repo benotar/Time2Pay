@@ -1,0 +1,6 @@
+@Time2Pay_API_HostAddress = http://localhost:5228
+
+GET {{Time2Pay_API_HostAddress}}/employments/emp_01a10808-9430-7e1a-b23a-fd213b4a5b09
+Accept: application/json
+
+###
