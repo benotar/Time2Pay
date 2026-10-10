@@ -24,7 +24,7 @@
         <File Path="docs/database.png"/>
     </Folder>
     <Folder Name="/src/">
-        <Project Path="src/Time2Pay.Api/Time2Pay.API.csproj"/>
+        <Project Path="src/Time2Pay.API/Time2Pay.API.csproj"/>
         <Project Path="src/Time2Pay.BLL/Time2Pay.BLL.csproj"/>
         <Project Path="src/Time2Pay.DAL/Time2Pay.DAL.csproj"/>
         <Project Path="src/Time2Pay.DTO/Time2Pay.DTO.csproj"/>

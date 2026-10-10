@@ -13,7 +13,7 @@ COPY ["src/Time2Pay.API/Time2Pay.API.csproj", "src/Time2Pay.API/"]
 COPY ["src/Time2Pay.BLL/Time2Pay.BLL.csproj", "src/Time2Pay.BLL/"]
 COPY ["src/Time2Pay.DAL/Time2Pay.DAL.csproj", "src/Time2Pay.DAL/"]
 COPY ["src/Time2Pay.DTO/Time2Pay.DTO.csproj", "src/Time2Pay.DTO/"]
-RUN dotnet restore "src/Time2Pay.Api/Time2Pay.API.csproj"
+RUN dotnet restore "src/Time2Pay.API/Time2Pay.API.csproj"
 COPY . .
 WORKDIR "/src/Time2Pay.API"
 RUN dotnet build "./Time2Pay.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
