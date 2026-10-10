@@ -15,7 +15,4 @@ internal static class DalConstants
     public const string ApplicationSchema = "time_2_pay";
 
     public const string DatabaseSection = "Database";
-
-    // Prefixes
-    public const string EmploymentPrefix = "emp_";
 }

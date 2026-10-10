@@ -4,3 +4,8 @@ GET {{Time2Pay_API_HostAddress}}/employments/emp_01a10808-9430-7e1a-b23a-fd213b4
 Accept: application/json
 
 ###
+
+GET {{Time2Pay_API_HostAddress}}/employments
+Accept: application/json
+
+###
