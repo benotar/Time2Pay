@@ -1,4 +1,4 @@
-﻿namespace Time2Pay.Api.Entities;
+﻿namespace Time2Pay.DAL.Entities;
 
 public abstract class AuditEntity
 {

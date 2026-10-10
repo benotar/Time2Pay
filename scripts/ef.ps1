@@ -2,7 +2,8 @@ $ErrorActionPreference = 'Stop'
 
 $contexts = @{
     Time2Pay = @{
-        Project = 'src/Time2Pay.Api'
+        Project = 'src/Time2Pay.DAL'
+        Startup = 'src/Time2Pay.API'
         ClassType = 'Time2PayDbContext'
         Output = 'Migrations/Time2Pay'
     }
@@ -18,6 +19,7 @@ $efArgs = @($args | Select-Object -Skip 1)
 
 $root = Split-Path -Parent $PSScriptRoot
 $project = Join-Path $root $target.Project
+$startup = Join-Path $root $target.Startup
 
 $isMigrationsAdd = $efArgs.Count -ge 2 -and $efArgs[0] -eq 'migrations' -and $efArgs[1] -eq 'add'
 $hasOutput = $efArgs -contains '-o' -or $efArgs -contains '--output-dir'
@@ -27,9 +29,9 @@ if ($isMigrationsAdd -and -not $hasOutput)
     $efArgs += '-o', $target.Output
 }
 
-Write-Host "dotnet ef $($efArgs -join ' ') --context $($target.ClassType) --project $project" -ForegroundColor DarkGray
+Write-Host "dotnet ef $( $efArgs -join ' ' ) --context $( $target.ClassType ) --project $project --startup-project $startup" -ForegroundColor DarkGray
 
-dotnet ef @efArgs --context $target.ClassType --project $project
+dotnet ef @efArgs --context $target.ClassType --project $project --startup-project $startup
 
 # .\scripts\ef.ps1 Time2Pay migrations add <Migrations name>
 

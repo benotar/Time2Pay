@@ -1,6 +1,6 @@
-﻿using Time2Pay.Api.Entities.Enums;
+﻿using Time2Pay.DAL.Enums;
 
-namespace Time2Pay.Api.Entities;
+namespace Time2Pay.DAL.Entities;
 
 public sealed class CompensationRate : AuditEntity
 {

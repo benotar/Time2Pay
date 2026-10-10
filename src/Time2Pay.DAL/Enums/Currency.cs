@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace Time2Pay.Api.Entities.Enums;
+namespace Time2Pay.DAL.Enums;
 
 public enum Currency
 {
@@ -10,5 +10,5 @@ public enum Currency
 
     [EnumMember(Value = "USD")] Usd = 2,
 
-    [EnumMember(Value = "EUR")] Eur = 3,
+    [EnumMember(Value = "EUR")] Eur = 3
 }

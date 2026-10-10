@@ -1,0 +1,8 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <ProjectReference Include="..\Time2Pay.DAL\Time2Pay.DAL.csproj" />
+        <ProjectReference Include="..\Time2Pay.DTO\Time2Pay.DTO.csproj" />
+    </ItemGroup>
+
+</Project>

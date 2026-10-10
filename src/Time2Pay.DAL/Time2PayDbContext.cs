@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Time2Pay.Api.Entities;
+using Time2Pay.DAL.Entities;
 
-namespace Time2Pay.Api.Database;
+namespace Time2Pay.DAL;
 
 public sealed class Time2PayDbContext(DbContextOptions<Time2PayDbContext> options) : DbContext(options)
 {
@@ -9,7 +9,7 @@ public sealed class Time2PayDbContext(DbContextOptions<Time2PayDbContext> option
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.HasDefaultSchema(Constants.ApplicationSchema);
+        modelBuilder.HasDefaultSchema(DalConstants.ApplicationSchema);
 
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(Time2PayDbContext).Assembly);
     }

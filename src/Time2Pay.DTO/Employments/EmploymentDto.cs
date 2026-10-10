@@ -1,9 +1,4 @@
-﻿namespace Time2Pay.Api.DTOs.Employments;
-
-public sealed class EmploymentsCollectionDto
-{
-    public required List<EmploymentDto> Items { get; init; }
-}
+﻿namespace Time2Pay.DTO.Employments;
 
 public sealed record EmploymentDto
 {

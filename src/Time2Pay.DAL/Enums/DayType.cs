@@ -1,4 +1,4 @@
-﻿namespace Time2Pay.Api.Entities.Enums;
+﻿namespace Time2Pay.DAL.Enums;
 
 public enum DayType
 {

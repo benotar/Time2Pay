@@ -4,11 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using Time2Pay.Api.Database;
 
 #nullable disable
 
-namespace Time2Pay.Api.Migrations.Time2Pay
+namespace Time2Pay.DAL.Migrations.Time2Pay
 {
     [DbContext(typeof(Time2PayDbContext))]
     partial class Time2PayDbContextModelSnapshot : ModelSnapshot

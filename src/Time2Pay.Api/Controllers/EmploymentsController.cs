@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Time2Pay.Api.Database;
-using Time2Pay.Api.DTOs.Employments;
+using Time2Pay.DAL;
+using Time2Pay.DTO.Employments;
 
-namespace Time2Pay.Api.Controllers;
+namespace Time2Pay.API.Controllers;
 
 [ApiController]
 [Route(Constants.EmploymentsRoute)]
@@ -28,7 +28,7 @@ public sealed class EmploymentsController : ControllerBase
                 StartDate = employment.StartDate,
                 EndDate = employment.EndDate,
                 CreatedAtUtc = employment.CreatedAtUtc,
-                LastModifiedAtUtc = employment.LastModifiedAtUtc,
+                LastModifiedAtUtc = employment.LastModifiedAtUtc
             })
             .ToListAsync(cancellationToken);
 
@@ -53,7 +53,7 @@ public sealed class EmploymentsController : ControllerBase
                 StartDate = employment.StartDate,
                 EndDate = employment.EndDate,
                 CreatedAtUtc = employment.CreatedAtUtc,
-                LastModifiedAtUtc = employment.LastModifiedAtUtc,
+                LastModifiedAtUtc = employment.LastModifiedAtUtc
             })
             .FirstOrDefaultAsync(cancellationToken);
 

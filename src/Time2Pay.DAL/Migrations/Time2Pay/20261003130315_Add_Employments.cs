@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Time2Pay.Api.Migrations.Time2Pay
+namespace Time2Pay.DAL.Migrations.Time2Pay
 {
     /// <inheritdoc />
     public partial class Add_Employments : Migration

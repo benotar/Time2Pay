@@ -5,18 +5,19 @@
         <UserSecretsId>4dbffde9-ea50-47d1-a130-7c66feaff8c0</UserSecretsId>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="EFCore.NamingConventions" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
         <PackageReference Include="Npgsql.OpenTelemetry" />
         <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
         <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
         <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
         <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
         <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Time2Pay.BLL\Time2Pay.BLL.csproj" />
     </ItemGroup>
 </Project>
