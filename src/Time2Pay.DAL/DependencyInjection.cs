@@ -24,15 +24,18 @@ public static class DependencyInjection
 
                 options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
 
-                options.UseNpgsql(configuration.GetConnectionString(DalConstants.DatabaseSection),
+                var dbContextOptionsBuilder = options.UseNpgsql(configuration.GetConnectionString(DalConstants.DatabaseSection),
                         npgsqlOptions => npgsqlOptions.MigrationsHistoryTable(HistoryRepository.DefaultTableName,
                             DalConstants.ApplicationSchema))
-                    .UseSnakeCaseNamingConvention();
+                    .UseSnakeCaseNamingConvention()
+                    .EnableDetailedErrors();
 
                 if (!isDevelopment)
                 {
                     return;
                 }
+
+                dbContextOptionsBuilder.EnableSensitiveDataLogging();
 
                 const string employmentName = "BenotaarInc";
 
