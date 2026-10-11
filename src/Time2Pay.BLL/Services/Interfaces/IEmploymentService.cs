@@ -1,12 +1,15 @@
-﻿using Time2Pay.DTO.Employments;
+﻿using Time2Pay.BLL.Utils;
+using Time2Pay.DTO.Employments;
 
 namespace Time2Pay.BLL.Services.Interfaces;
 
 public interface IEmploymentService
 {
-    Task<EmploymentDto?> GetEmploymentAsync(string id, CancellationToken cancellationToken);
+    Task<Result<EmploymentDto>> GetEmploymentAsync(string id, CancellationToken cancellationToken);
 
-    Task<EmploymentsCollectionDto> GetEmploymentsAsync(CancellationToken cancellationToken);
+    Task<Result<EmploymentsCollectionDto>> GetEmploymentsAsync(CancellationToken cancellationToken);
 
-    Task<EmploymentDto> CreateAsync(CreateEmploymentDto dto, CancellationToken cancellationToken);
+    Task<Result<EmploymentDto>> CreateAsync(CreateEmploymentDto dto, CancellationToken cancellationToken);
+
+    Task<Result> UpdateAsync(string id, UpdateEmploymentDto dto, CancellationToken cancellationToken);
 }

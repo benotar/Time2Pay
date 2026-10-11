@@ -41,4 +41,14 @@ public static class EmploymentMapping
             EndDate = dto.EndDate
         };
     }
+
+    public static void UpdateFromDto(this Employment employment, UpdateEmploymentDto dto)
+    {
+        // employment.LastModifiedAtUtc is going to be updated in DAL.UpdateAuditEntityInterceptor
+
+        employment.Name = dto.Name;
+        employment.Description = dto.Description;
+        employment.StartDate = dto.StartDate;
+        employment.EndDate = dto.EndDate;
+    }
 }

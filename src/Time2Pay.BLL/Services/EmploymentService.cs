@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Time2Pay.BLL.Errors;
 using Time2Pay.BLL.Mapping.Employments;
 using Time2Pay.BLL.Services.Interfaces;
+using Time2Pay.BLL.Utils;
 using Time2Pay.DAL;
 using Time2Pay.DTO.Employments;
 
@@ -15,15 +17,22 @@ public sealed class EmploymentService : IEmploymentService
         _dbContext = dbContext;
     }
 
-    public Task<EmploymentDto?> GetEmploymentAsync(string id, CancellationToken cancellationToken)
+    public async Task<Result<EmploymentDto>> GetEmploymentAsync(string id, CancellationToken cancellationToken)
     {
-        return _dbContext.Employments
+        var employment = await _dbContext.Employments
             .Where(emp => emp.Id == id)
             .Select(EmploymentMapping.ProjectToDto())
             .FirstOrDefaultAsync(cancellationToken);
+
+        if (employment is null)
+        {
+            return Result.Failure<EmploymentDto>(EmploymentErrors.NotFound(id));
+        }
+
+        return employment;
     }
 
-    public async Task<EmploymentsCollectionDto> GetEmploymentsAsync(CancellationToken cancellationToken)
+    public async Task<Result<EmploymentsCollectionDto>> GetEmploymentsAsync(CancellationToken cancellationToken)
     {
         var employmentDtoList = await _dbContext.Employments
             .Select(EmploymentMapping.ProjectToDto())
@@ -35,7 +44,7 @@ public sealed class EmploymentService : IEmploymentService
         };
     }
 
-    public async Task<EmploymentDto> CreateAsync(CreateEmploymentDto dto, CancellationToken cancellationToken)
+    public async Task<Result<EmploymentDto>> CreateAsync(CreateEmploymentDto dto, CancellationToken cancellationToken)
     {
         var employment = dto.ToEntity();
 
@@ -44,5 +53,21 @@ public sealed class EmploymentService : IEmploymentService
         await _dbContext.SaveChangesAsync(cancellationToken);
 
         return employment.ToDto();
+    }
+
+    public async Task<Result> UpdateAsync(string id, UpdateEmploymentDto dto, CancellationToken cancellationToken)
+    {
+        var employment = await _dbContext.Employments.FirstOrDefaultAsync(emp => emp.Id == id, cancellationToken);
+
+        if (employment is null)
+        {
+            return Result.Failure(EmploymentErrors.NotFound(id));
+        }
+
+        employment.UpdateFromDto(dto);
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+
+        return Result.Success();
     }
 }

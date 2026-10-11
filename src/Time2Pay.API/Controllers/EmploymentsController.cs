@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Time2Pay.BLL.Services.Interfaces;
+using Time2Pay.BLL.Utils;
 using Time2Pay.DTO.Employments;
 
 namespace Time2Pay.API.Controllers;
 
-[ApiController]
 [Route(Constants.EmploymentsRoute)]
-public sealed class EmploymentsController : ControllerBase
+public sealed class EmploymentsController : BaseController
 {
     private readonly IEmploymentService _employmentService;
 
@@ -15,33 +15,37 @@ public sealed class EmploymentsController : ControllerBase
         _employmentService = employmentService;
     }
 
-    [HttpGet]
-    public async Task<ActionResult<EmploymentsCollectionDto>> GetCollection(CancellationToken cancellationToken)
-    {
-        var collectionDto = await _employmentService.GetEmploymentsAsync(cancellationToken);
-
-        return Ok(collectionDto);
-    }
-
     [HttpGet("{id}")]
     public async Task<ActionResult<EmploymentDto>> Get(string id, CancellationToken cancellationToken)
     {
-        var employmentDto = await _employmentService.GetEmploymentAsync(id, cancellationToken);
+        var employmentResult = await _employmentService.GetEmploymentAsync(id, cancellationToken);
 
-        if (employmentDto is null)
-        {
-            return NotFound();
-        }
+        return employmentResult.Match(dto => Ok(dto), ToProblem);
+    }
 
-        return Ok(employmentDto);
+    [HttpGet]
+    public async Task<ActionResult<EmploymentsCollectionDto>> GetCollection(CancellationToken cancellationToken)
+    {
+        var collectionResult = await _employmentService.GetEmploymentsAsync(cancellationToken);
+
+        return collectionResult.Match(dto => Ok(dto), ToProblem);
     }
 
     [HttpPost]
-    public async Task<ActionResult<EmploymentDto>> CreateAsync([FromBody] CreateEmploymentDto request,
+    public async Task<ActionResult<EmploymentDto>> Create(CreateEmploymentDto createEmploymentDto,
         CancellationToken cancellationToken)
     {
-        var employmentDto = await _employmentService.CreateAsync(request, cancellationToken);
+        var employmentResult = await _employmentService.CreateAsync(createEmploymentDto, cancellationToken);
 
-        return CreatedAtAction(nameof(Get), new { id = employmentDto.Id }, employmentDto);
+        return employmentResult.Match(dto => CreatedAtAction(nameof(Get), new { id = dto.Id }, dto), ToProblem);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<ActionResult> Update(string id, UpdateEmploymentDto updateEmploymentDto,
+        CancellationToken cancellationToken)
+    {
+        var result = await _employmentService.UpdateAsync(id, updateEmploymentDto, cancellationToken);
+
+        return result.Match(NoContent, ToProblem);
     }
 }

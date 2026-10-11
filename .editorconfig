@@ -446,3 +446,9 @@ dotnet_diagnostic.S6781.severity = none
 
 # IDE0061: Use expression body for local function
 dotnet_diagnostic.IDE0061.severity = none
+
+# S1135: Complete the task associated to this 'TODO' comment
+dotnet_diagnostic.S1135.severity = none
+
+# IDE0023: Use expression body for conversion operator
+dotnet_diagnostic.IDE0023.severity = none
