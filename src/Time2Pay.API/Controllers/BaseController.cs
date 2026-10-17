@@ -25,18 +25,8 @@ public abstract class BaseController : ControllerBase
 
         return Problem(title: title,
             detail: detail,
-            type: GetErrorType(result.Error.Type),
             statusCode: GetStatusCode(result.Error.Type),
             extensions: GetErrors(result));
-
-        static string GetErrorType(ErrorType errorType) => errorType switch
-        {
-            ErrorType.Validation => "https://tools.ietf.org/html/rfc7231#section-6.5.1",
-            ErrorType.Problem => "https://tools.ietf.org/html/rfc7231#section-6.5.1",
-            ErrorType.NotFound => "https://tools.ietf.org/html/rfc7231#section-6.5.4",
-            ErrorType.Conflict => "https://tools.ietf.org/html/rfc7231#section-6.5.8",
-            _ => "https://tools.ietf.org/html/rfc7231#section-6.6.1"
-        };
 
         static int GetStatusCode(ErrorType errorType) => errorType switch
         {
