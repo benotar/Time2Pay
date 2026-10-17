@@ -12,6 +12,8 @@ public static class DependencyInjection
         {
             services.AddScoped<IEmploymentService, EmploymentService>();
 
+            services.AddScoped<IWorkDayService, WorkDayService>();
+
             return services;
         }
     }

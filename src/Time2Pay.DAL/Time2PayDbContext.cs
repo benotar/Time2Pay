@@ -7,6 +7,8 @@ public sealed class Time2PayDbContext(DbContextOptions<Time2PayDbContext> option
 {
     public DbSet<Employment> Employments { get; set; }
 
+    public DbSet<WorkDay> WorkDays { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema(DalConstants.ApplicationSchema);
