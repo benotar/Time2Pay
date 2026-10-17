@@ -48,4 +48,12 @@ public sealed class EmploymentsController : BaseController
 
         return result.Match(NoContent, ToProblem);
     }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> Delete(string id, CancellationToken cancellationToken)
+    {
+        var result = await _employmentService.DeleteAsync(id, cancellationToken);
+        
+        return result.Match(NoContent, ToProblem);
+    }
 }

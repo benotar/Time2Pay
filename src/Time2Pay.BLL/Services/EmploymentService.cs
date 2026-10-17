@@ -20,6 +20,7 @@ public sealed class EmploymentService : IEmploymentService
     public async Task<Result<EmploymentDto>> GetEmploymentAsync(string id, CancellationToken cancellationToken)
     {
         var employment = await _dbContext.Employments
+            .AsNoTracking()
             .Where(emp => emp.Id == id)
             .Select(EmploymentMapping.ProjectToDto())
             .FirstOrDefaultAsync(cancellationToken);
@@ -35,6 +36,7 @@ public sealed class EmploymentService : IEmploymentService
     public async Task<Result<EmploymentsCollectionDto>> GetEmploymentsAsync(CancellationToken cancellationToken)
     {
         var employmentDtoList = await _dbContext.Employments
+            .AsNoTracking()
             .Select(EmploymentMapping.ProjectToDto())
             .ToListAsync(cancellationToken);
 
@@ -65,6 +67,22 @@ public sealed class EmploymentService : IEmploymentService
         }
 
         employment.UpdateFromDto(dto);
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+
+        return Result.Success();
+    }
+
+    public async Task<Result> DeleteAsync(string id, CancellationToken cancellationToken)
+    {
+        var employment = await _dbContext.Employments.FirstOrDefaultAsync(emp => emp.Id == id, cancellationToken);
+
+        if (employment is null)
+        {
+            return Result.Failure(EmploymentErrors.NotFound(id));
+        }
+
+        _dbContext.Employments.Remove(employment);
 
         await _dbContext.SaveChangesAsync(cancellationToken);
 

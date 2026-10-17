@@ -12,6 +12,9 @@ end_of_line = lf
 # C# files
 [*.cs]
 
+resharper_constructor_or_destructor_body = block_body
+resharper_method_or_operator_body = block_body
+
 #### Core EditorConfig Options ####
 
 # Indentation and spacing
@@ -57,22 +60,7 @@ dotnet_style_prefer_conditional_expression_over_return = true:none
 dotnet_style_prefer_inferred_anonymous_type_member_names = true:error
 dotnet_style_prefer_inferred_tuple_names = true:error
 dotnet_style_prefer_is_null_check_over_reference_equality_method = true:error
-csharp_indent_labels = one_less_than_current
-csharp_using_directive_placement = outside_namespace:error
-csharp_prefer_simple_using_statement = true:error
-csharp_prefer_braces = true:error
-csharp_style_namespace_declarations = file_scoped:error
-csharp_style_prefer_method_group_conversion = true:silent
-csharp_style_prefer_top_level_statements = true:silent
 csharp_style_prefer_primary_constructors = true:none
-csharp_style_expression_bodied_methods = false:silent
-csharp_style_expression_bodied_constructors = false:silent
-csharp_style_expression_bodied_operators = true:error
-csharp_style_expression_bodied_properties = true:error
-csharp_style_expression_bodied_indexers = true:error
-csharp_style_expression_bodied_accessors = true:error
-csharp_style_expression_bodied_lambdas = true:none
-csharp_style_expression_bodied_local_functions = true:error
 
 [*.{cs,vb}]
 dotnet_style_prefer_simplified_boolean_expressions = true:suggestion
@@ -356,7 +344,7 @@ dotnet_diagnostic.CA2234.severity = none
 # CA2326: Do not use TypeNameHandling values other than None
 dotnet_diagnostic.CA2326.severity = none
 
-# CA2326: Do not use insecure JsonSerializerSettings
+# CA2327: Do not use insecure JsonSerializerSettings
 dotnet_diagnostic.CA2327.severity = none
 
 # CA5394: Do not use insecure randomness
@@ -408,7 +396,7 @@ dotnet_diagnostic.S125.severity = none
 # S1075: URIs should not be hardcoded
 dotnet_diagnostic.S1075.severity = none
 
-# S2094: Utility classes should not have public constructors
+# S1118: Utility classes should not have public constructors
 dotnet_diagnostic.S1118.severity = none
 
 # S1144: Unused private types or members should be removed

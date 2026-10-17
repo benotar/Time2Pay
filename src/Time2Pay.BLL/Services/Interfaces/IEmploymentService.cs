@@ -12,4 +12,6 @@ public interface IEmploymentService
     Task<Result<EmploymentDto>> CreateAsync(CreateEmploymentDto dto, CancellationToken cancellationToken);
 
     Task<Result> UpdateAsync(string id, UpdateEmploymentDto dto, CancellationToken cancellationToken);
+
+    Task<Result> DeleteAsync(string id, CancellationToken cancellationToken);
 }
