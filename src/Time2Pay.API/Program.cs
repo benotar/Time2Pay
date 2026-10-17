@@ -4,6 +4,7 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Time2Pay.API;
+using Time2Pay.BLL;
 using Time2Pay.DAL;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,7 +16,10 @@ builder.Services.AddControllers(options =>
 
 builder.Services.AddOpenApi();
 
-builder.Services.AddDatabase(builder.Environment.IsDevelopment());
+builder.Services
+    .AddDallServices()
+    .AddDatabase(builder.Environment.IsDevelopment())
+    .AddServices();
 
 builder.Services.AddOpenTelemetry()
     .ConfigureResource(resource => resource.AddService(builder.Environment.ApplicationName))
