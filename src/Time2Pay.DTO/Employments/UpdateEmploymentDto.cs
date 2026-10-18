@@ -1,6 +1,6 @@
 ﻿namespace Time2Pay.DTO.Employments;
 
-public sealed record UpdateEmploymentDto
+public sealed record UpdateEmploymentDto : IEmploymentDto
 {
     public required string Name { get; init; }
     public string? Description { get; init; }

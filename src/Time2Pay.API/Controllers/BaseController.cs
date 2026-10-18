@@ -26,7 +26,7 @@ public abstract class BaseController : ControllerBase
         return Problem(title: title,
             detail: detail,
             statusCode: GetStatusCode(result.Error.Type),
-            extensions: GetErrors(result));
+            extensions: GetValidationViolations(result));
 
         static int GetStatusCode(ErrorType errorType) => errorType switch
         {
@@ -36,16 +36,16 @@ public abstract class BaseController : ControllerBase
             _ => StatusCodes.Status500InternalServerError
         };
 
-        static Dictionary<string, object?>? GetErrors(Result result)
+        static Dictionary<string, object?>? GetValidationViolations(Result result)
         {
-            if (result.Error is not ValidationError validationError)
+            if (result.Error is not ValidationViolation validationViolation)
             {
                 return null;
             }
 
             return new Dictionary<string, object?>
             {
-                { "errors", validationError.Errors }
+                { "violations", validationViolation.Items }
             };
         }
     }

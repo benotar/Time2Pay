@@ -10,9 +10,9 @@ public class WorkDayConfiguration : IEntityTypeConfiguration<WorkDay>
     {
         builder.HasKey(wd => wd.Id);
 
-        builder.Property(wd => wd.Id).HasMaxLength(DalConstants.IdMaxLength);
+        builder.Property(wd => wd.Id).HasMaxLength(EntityLimits.IdMaxLength);
 
-        builder.Property(wd => wd.Comment).HasMaxLength(DalConstants.CommentMaxLength);
+        builder.Property(wd => wd.Comment).HasMaxLength(EntityLimits.CommentMaxLength);
 
         builder.Property(wd => wd.DurationMinutes)
             .HasComputedColumnSql(DalConstants.DurationMinutesComputedColumnSql, true);

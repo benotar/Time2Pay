@@ -10,10 +10,13 @@ public class EmploymentConfiguration : IEntityTypeConfiguration<Employment>
     {
         builder.HasKey(e => e.Id);
 
-        builder.Property(e => e.Id).HasMaxLength(DalConstants.IdMaxLength);
+        builder.Property(e => e.Id).HasMaxLength(EntityLimits.IdMaxLength);
 
-        builder.Property(e => e.Name).HasMaxLength(DalConstants.NameMaxLength);
+        builder.Property(e => e.Name).HasMaxLength(EntityLimits.NameMaxLength);
 
-        builder.Property(e => e.Description).HasMaxLength(DalConstants.DescriptionMaxLength);
+        builder.Property(e => e.Description).HasMaxLength(EntityLimits.DescriptionMaxLength);
+
+        builder.ToTable(table => table.HasCheckConstraint(DalConstants.EmploymentsEndDateAfterStartDateConstraintName,
+            DalConstants.EmploymentsEndDateAfterStartDateConstraint));
     }
 }

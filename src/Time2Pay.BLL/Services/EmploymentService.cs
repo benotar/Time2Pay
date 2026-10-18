@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using Time2Pay.BLL.Errors;
 using Time2Pay.BLL.Mapping.Employments;
 using Time2Pay.BLL.Services.Interfaces;
@@ -11,10 +12,15 @@ namespace Time2Pay.BLL.Services;
 public sealed class EmploymentService : IEmploymentService
 {
     private readonly Time2PayDbContext _dbContext;
+    private readonly IValidator<CreateEmploymentDto> _createValidator;
+    private readonly IValidator<UpdateEmploymentDto> _updateValidator;
 
-    public EmploymentService(Time2PayDbContext dbContext)
+    public EmploymentService(Time2PayDbContext dbContext, IValidator<CreateEmploymentDto> createValidator,
+        IValidator<UpdateEmploymentDto> updateValidator)
     {
         _dbContext = dbContext;
+        _createValidator = createValidator;
+        _updateValidator = updateValidator;
     }
 
     public async Task<Result<EmploymentDto>> GetEmploymentAsync(string id, CancellationToken cancellationToken)
@@ -48,6 +54,13 @@ public sealed class EmploymentService : IEmploymentService
 
     public async Task<Result<EmploymentDto>> CreateAsync(CreateEmploymentDto dto, CancellationToken cancellationToken)
     {
+        var validationResult = await _createValidator.ValidateAsync(dto, cancellationToken);
+
+        if (!validationResult.IsValid)
+        {
+            return Result.Failure<EmploymentDto>(ValidationViolation.FromResult(validationResult));
+        }
+
         var employment = dto.ToEntity();
 
         _dbContext.Employments.Add(employment);
@@ -59,6 +72,13 @@ public sealed class EmploymentService : IEmploymentService
 
     public async Task<Result> UpdateAsync(string id, UpdateEmploymentDto dto, CancellationToken cancellationToken)
     {
+        var validationResult = await _updateValidator.ValidateAsync(dto, cancellationToken);
+
+        if (!validationResult.IsValid)
+        {
+            return Result.Failure(ValidationViolation.FromResult(validationResult));
+        }
+
         var employment = await _dbContext.Employments.FirstOrDefaultAsync(emp => emp.Id == id, cancellationToken);
 
         if (employment is null)

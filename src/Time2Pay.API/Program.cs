@@ -19,7 +19,7 @@ builder.Services.AddOpenApi();
 builder.Services
     .AddDallServices()
     .AddDatabase(builder.Environment.IsDevelopment())
-    .AddServices();
+    .AddBll();
 
 builder.Services.AddOpenTelemetry()
     .ConfigureResource(resource => resource.AddService(builder.Environment.ApplicationName))

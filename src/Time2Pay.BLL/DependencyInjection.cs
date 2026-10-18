@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
 using Time2Pay.BLL.Services;
 using Time2Pay.BLL.Services.Interfaces;
 
@@ -8,11 +9,13 @@ public static class DependencyInjection
 {
     extension(IServiceCollection services)
     {
-        public IServiceCollection AddServices()
+        public IServiceCollection AddBll()
         {
             services.AddScoped<IEmploymentService, EmploymentService>();
 
             services.AddScoped<IWorkDayService, WorkDayService>();
+
+            services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
 
             return services;
         }

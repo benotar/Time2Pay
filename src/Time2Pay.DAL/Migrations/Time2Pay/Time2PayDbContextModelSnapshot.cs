@@ -60,7 +60,10 @@ namespace Time2Pay.DAL.Migrations.Time2Pay
                     b.HasKey("Id")
                         .HasName("pk_employments");
 
-                    b.ToTable("employments", "time_2_pay");
+                    b.ToTable("employments", "time_2_pay", t =>
+                        {
+                            t.HasCheckConstraint("ck_employments_end_date_after_start_date", "end_date IS NULL OR end_date >= start_date");
+                        });
                 });
 
             modelBuilder.Entity("Time2Pay.DAL.Entities.WorkDay", b =>
