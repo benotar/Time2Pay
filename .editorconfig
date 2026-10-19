@@ -171,6 +171,7 @@ csharp_space_between_square_brackets = false
 # Wrapping preferences
 csharp_preserve_single_line_blocks = true
 csharp_preserve_single_line_statements = false
+resharper_wrap_chained_binary_expressions = wrap_if_long
 
 #### Naming styles ####
 

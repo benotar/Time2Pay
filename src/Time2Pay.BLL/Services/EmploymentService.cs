@@ -39,10 +39,12 @@ public sealed class EmploymentService : IEmploymentService
         return employment;
     }
 
-    public async Task<Result<EmploymentsCollectionDto>> GetEmploymentsAsync(CancellationToken cancellationToken)
+    public async Task<Result<EmploymentsCollectionDto>> GetEmploymentsAsync(EmploymentsQueryParameters query,
+        CancellationToken cancellationToken)
     {
         var employmentDtoList = await _dbContext.Employments
             .AsNoTracking()
+            .WhereAnyContains(query.Search, emp => emp.Name, emp => emp.Description)
             .Select(EmploymentMapping.ProjectToDto())
             .ToListAsync(cancellationToken);
 

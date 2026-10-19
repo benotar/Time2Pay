@@ -7,7 +7,7 @@ public interface IEmploymentService
 {
     Task<Result<EmploymentDto>> GetEmploymentAsync(string id, CancellationToken cancellationToken);
 
-    Task<Result<EmploymentsCollectionDto>> GetEmploymentsAsync(CancellationToken cancellationToken);
+    Task<Result<EmploymentsCollectionDto>> GetEmploymentsAsync(EmploymentsQueryParameters query, CancellationToken cancellationToken);
 
     Task<Result<EmploymentDto>> CreateAsync(CreateEmploymentDto dto, CancellationToken cancellationToken);
 

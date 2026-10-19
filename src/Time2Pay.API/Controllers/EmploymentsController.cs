@@ -24,9 +24,10 @@ public sealed class EmploymentsController : BaseController
     }
 
     [HttpGet]
-    public async Task<ActionResult<EmploymentsCollectionDto>> GetCollection(CancellationToken cancellationToken)
+    public async Task<ActionResult<EmploymentsCollectionDto>> GetCollection([FromQuery] EmploymentsQueryParameters query,
+        CancellationToken cancellationToken)
     {
-        var collectionResult = await _employmentService.GetEmploymentsAsync(cancellationToken);
+        var collectionResult = await _employmentService.GetEmploymentsAsync(query, cancellationToken);
 
         return collectionResult.Match(dto => Ok(dto), ToProblem);
     }
@@ -53,7 +54,7 @@ public sealed class EmploymentsController : BaseController
     public async Task<ActionResult> Delete(string id, CancellationToken cancellationToken)
     {
         var result = await _employmentService.DeleteAsync(id, cancellationToken);
-        
+
         return result.Match(NoContent, ToProblem);
     }
 }
