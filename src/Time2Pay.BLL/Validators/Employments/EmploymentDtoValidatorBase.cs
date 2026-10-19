@@ -20,8 +20,10 @@ public abstract class EmploymentDtoValidatorBase<TDto> : AbstractValidator<TDto>
         RuleFor(dto => dto.StartDate)
             .NotEmpty();
 
-        RuleFor(dto => dto.EndDate)
-            .GreaterThanOrEqualTo(dto => dto.StartDate)
-            .When(dto => dto.EndDate.HasValue);
+        When(dto => dto.EndDate is not null, () =>
+        {
+            RuleFor(dto => dto.EndDate)
+                .GreaterThanOrEqualTo(dto => dto.StartDate);
+        });
     }
 }
