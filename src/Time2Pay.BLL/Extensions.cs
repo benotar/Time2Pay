@@ -1,6 +1,8 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using Time2Pay.DTO.Common;
 
 namespace Time2Pay.BLL;
 
@@ -41,5 +43,28 @@ public static class Extensions
         }
 
         return query.Where(Expression.Lambda<Func<T, bool>>(predicate!, parameter));
+    }
+
+    public static async Task<PaginationResult<T>> CreatePaginationResultAsync<T>(this IQueryable<T> query, int page, int pageSize,
+        CancellationToken cancellationToken)
+    {
+        pageSize = Math.Clamp(pageSize, BllConstants.MinPageSize, BllConstants.MaxPageSize);
+
+        page = Math.Clamp(page, BllConstants.MinPageSize, int.MaxValue / pageSize);
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var items = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        return new PaginationResult<T>
+        {
+            Items = items,
+            Page = page,
+            PageSize = pageSize,
+            TotalCount = totalCount
+        };
     }
 }

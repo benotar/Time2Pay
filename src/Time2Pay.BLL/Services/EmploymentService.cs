@@ -5,6 +5,7 @@ using Time2Pay.BLL.Mapping.Employments;
 using Time2Pay.BLL.Services.Interfaces;
 using Time2Pay.BLL.Utils;
 using Time2Pay.DAL;
+using Time2Pay.DTO.Common;
 using Time2Pay.DTO.Employments;
 
 namespace Time2Pay.BLL.Services;
@@ -39,19 +40,17 @@ public sealed class EmploymentService : IEmploymentService
         return employment;
     }
 
-    public async Task<Result<EmploymentsCollectionDto>> GetEmploymentsAsync(EmploymentsQueryParameters query,
+    public async Task<Result<PaginationResult<EmploymentDto>>> GetEmploymentsAsync(EmploymentsQueryParameters query,
         CancellationToken cancellationToken)
     {
-        var employmentDtoList = await _dbContext.Employments
+        var employments = await _dbContext.Employments
             .AsNoTracking()
             .WhereAnyContains(query.Search, emp => emp.Name, emp => emp.Description)
+            .OrderBy(emp => emp.CreatedAtUtc)
             .Select(EmploymentMapping.ProjectToDto())
-            .ToListAsync(cancellationToken);
+            .CreatePaginationResultAsync(query.Page, query.PageSize, cancellationToken);
 
-        return new EmploymentsCollectionDto
-        {
-            Items = employmentDtoList
-        };
+        return employments;
     }
 
     public async Task<Result<EmploymentDto>> CreateAsync(CreateEmploymentDto dto, CancellationToken cancellationToken)

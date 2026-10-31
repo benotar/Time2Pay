@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Time2Pay.BLL.Services.Interfaces;
 using Time2Pay.BLL.Utils;
+using Time2Pay.DTO.Common;
 using Time2Pay.DTO.Employments;
 
 namespace Time2Pay.API.Controllers;
@@ -24,7 +25,7 @@ public sealed class EmploymentsController : BaseController
     }
 
     [HttpGet]
-    public async Task<ActionResult<EmploymentsCollectionDto>> GetCollection([FromQuery] EmploymentsQueryParameters query,
+    public async Task<ActionResult<PaginationResult<EmploymentDto>>> GetCollection([FromQuery] EmploymentsQueryParameters query,
         CancellationToken cancellationToken)
     {
         var collectionResult = await _employmentService.GetEmploymentsAsync(query, cancellationToken);

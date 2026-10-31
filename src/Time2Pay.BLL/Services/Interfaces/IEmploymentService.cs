@@ -1,4 +1,5 @@
 ﻿using Time2Pay.BLL.Utils;
+using Time2Pay.DTO.Common;
 using Time2Pay.DTO.Employments;
 
 namespace Time2Pay.BLL.Services.Interfaces;
@@ -7,7 +8,8 @@ public interface IEmploymentService
 {
     Task<Result<EmploymentDto>> GetEmploymentAsync(string id, CancellationToken cancellationToken);
 
-    Task<Result<EmploymentsCollectionDto>> GetEmploymentsAsync(EmploymentsQueryParameters query, CancellationToken cancellationToken);
+    Task<Result<PaginationResult<EmploymentDto>>> GetEmploymentsAsync(EmploymentsQueryParameters query,
+        CancellationToken cancellationToken);
 
     Task<Result<EmploymentDto>> CreateAsync(CreateEmploymentDto dto, CancellationToken cancellationToken);
 
