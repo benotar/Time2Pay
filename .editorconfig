@@ -441,3 +441,9 @@ dotnet_diagnostic.S1135.severity = none
 
 # IDE0023: Use expression body for conversion operator
 dotnet_diagnostic.IDE0023.severity = none
+
+# IDE0023: Remove unused parameter 'cancellationToken' if it is not part of a shipped public API
+dotnet_diagnostic.IDE0060.severity = none
+
+# S4487: Remove this unread private field '_workDayService' or refactor the code to use its value.
+dotnet_diagnostic.S4487.severity = none

@@ -1,6 +1,6 @@
 ﻿namespace Time2Pay.DTO.Employments;
 
-public interface IEmploymentDto
+public interface IEmploymentModel
 {
     string Name { get; }
     string? Description { get; }

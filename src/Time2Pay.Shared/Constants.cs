@@ -1,9 +1,36 @@
-﻿namespace Time2Pay.DAL;
+﻿namespace Time2Pay.Shared;
 
-internal static class DalConstants
+public static class Constants
 {
-    // Database
+    #region API
 
+    public const string EmploymentsRoute = "employments";
+    public const string WorkDaysRoute = "workdays";
+
+    #endregion
+
+    #region BLL
+
+    public const int MinPageSize = 1;
+    public const int MaxPageSize = 100000;
+
+    #endregion
+
+    #region DAL
+
+    // Id
+    public const int IdMaxLength = 500;
+
+    // Name
+    public const int NameMaxLength = 100;
+    public const int NameMinLength = 3;
+
+    // Description
+    public const int DescriptionMaxLength = 500;
+
+    // Comment
+    public const int CommentMaxLength = 500;
+    
     public const string ApplicationSchema = "time_2_pay";
 
     public const string DatabaseSection = "Database";
@@ -12,7 +39,6 @@ internal static class DalConstants
     public const string DurationMinutesComputedColumnSql = $"{WorkDayShiftTime}::int - break_minutes";
 
     // Employments constraints
-
     public const string EmploymentsEndDateAfterStartDateConstraintName = "ck_employments_end_date_after_start_date";
 
     // SQL CHECK allows true and NULL, but doesn't false.
@@ -22,7 +48,6 @@ internal static class DalConstants
 
 
     // WorkDays constraints
-
     public const string WorkDaysDayTypeIsValidConstraintName = "ck_work_days_day_type_is_valid";
     public const string WorkDaysDayTypeIsValidConstraint = "day_type BETWEEN 1 AND 4";
 
@@ -41,4 +66,6 @@ internal static class DalConstants
 
     public const string WorkDaysBreakWithinShiftConstraintName = "ck_work_days_break_within_shift";
     public const string WorkDaysBreakWithinShiftConstraint = $"break_minutes <= {WorkDayShiftTime}";
+
+    #endregion
 }

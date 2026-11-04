@@ -9,6 +9,7 @@ using Time2Pay.DAL.Interceptors;
 using Time2Pay.DAL.Providers;
 using Time2Pay.DAL.Providers.Interfaces;
 using Time2Pay.DAL.Utils;
+using Time2Pay.Shared;
 
 namespace Time2Pay.DAL;
 
@@ -24,9 +25,9 @@ public static class DependencyInjection
 
                 options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
 
-                var dbContextOptionsBuilder = options.UseNpgsql(configuration.GetConnectionString(DalConstants.DatabaseSection),
+                var dbContextOptionsBuilder = options.UseNpgsql(configuration.GetConnectionString(Constants.DatabaseSection),
                         npgsqlOptions => npgsqlOptions.MigrationsHistoryTable(HistoryRepository.DefaultTableName,
-                            DalConstants.ApplicationSchema))
+                            Constants.ApplicationSchema))
                     .UseSnakeCaseNamingConvention()
                     .EnableDetailedErrors();
 

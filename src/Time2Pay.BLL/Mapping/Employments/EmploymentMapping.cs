@@ -7,7 +7,7 @@ namespace Time2Pay.BLL.Mapping.Employments;
 
 public static class EmploymentMapping
 {
-    private static readonly Expression<Func<Employment, EmploymentDto>> Projection = employment => new EmploymentDto
+    private static readonly Expression<Func<Employment, EmploymentModel>> Projection = employment => new EmploymentModel
     {
         Id = employment.Id,
         Name = employment.Name,
@@ -18,37 +18,37 @@ public static class EmploymentMapping
         LastModifiedAtUtc = employment.LastModifiedAtUtc
     };
 
-    private static readonly Func<Employment, EmploymentDto> CompiledProjection = Projection.Compile();
+    private static readonly Func<Employment, EmploymentModel> CompiledProjection = Projection.Compile();
 
-    public static Expression<Func<Employment, EmploymentDto>> ProjectToDto()
+    public static Expression<Func<Employment, EmploymentModel>> ProjectToDto()
     {
         return Projection;
     }
 
-    public static EmploymentDto ToDto(this Employment employment)
+    public static EmploymentModel ToDto(this Employment employment)
     {
         return CompiledProjection(employment);
     }
 
-    public static Employment ToEntity(this CreateEmploymentDto dto)
+    public static Employment ToEntity(this CreateEmploymentModel model)
     {
         return new Employment
         {
             Id = IdGenerator.PrefixId<Employment>(),
-            Name = dto.Name,
-            Description = dto.Description,
-            StartDate = dto.StartDate,
-            EndDate = dto.EndDate
+            Name = model.Name,
+            Description = model.Description,
+            StartDate = model.StartDate,
+            EndDate = model.EndDate
         };
     }
 
-    public static void UpdateFromDto(this Employment employment, UpdateEmploymentDto dto)
+    public static void UpdateFromModel(this Employment employment, UpdateEmploymentModel model)
     {
         // employment.LastModifiedAtUtc is going to be updated in DAL.UpdateAuditEntityInterceptor
 
-        employment.Name = dto.Name;
-        employment.Description = dto.Description;
-        employment.StartDate = dto.StartDate;
-        employment.EndDate = dto.EndDate;
+        employment.Name = model.Name;
+        employment.Description = model.Description;
+        employment.StartDate = model.StartDate;
+        employment.EndDate = model.EndDate;
     }
 }

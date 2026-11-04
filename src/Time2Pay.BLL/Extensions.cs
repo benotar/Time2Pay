@@ -3,6 +3,7 @@ using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using Time2Pay.DTO.Common;
+using Time2Pay.Shared;
 
 namespace Time2Pay.BLL;
 
@@ -48,9 +49,9 @@ public static class Extensions
     public static async Task<PaginationResult<T>> CreatePaginationResultAsync<T>(this IQueryable<T> query, int page, int pageSize,
         CancellationToken cancellationToken)
     {
-        pageSize = Math.Clamp(pageSize, BllConstants.MinPageSize, BllConstants.MaxPageSize);
+        pageSize = Math.Clamp(pageSize, Constants.MinPageSize, Constants.MaxPageSize);
 
-        page = Math.Clamp(page, BllConstants.MinPageSize, int.MaxValue / pageSize);
+        page = Math.Clamp(page, Constants.MinPageSize, int.MaxValue / pageSize);
 
         var totalCount = await query.CountAsync(cancellationToken);
 

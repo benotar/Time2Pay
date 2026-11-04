@@ -3,6 +3,7 @@ using Time2Pay.BLL.Services.Interfaces;
 using Time2Pay.BLL.Utils;
 using Time2Pay.DTO.Common;
 using Time2Pay.DTO.Employments;
+using Time2Pay.Shared;
 
 namespace Time2Pay.API.Controllers;
 
@@ -17,36 +18,36 @@ public sealed class EmploymentsController : BaseController
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<EmploymentDto>> Get(string id, CancellationToken cancellationToken)
+    public async Task<ActionResult<EmploymentModel>> Get(string id, CancellationToken cancellationToken)
     {
-        var employmentResult = await _employmentService.GetEmploymentAsync(id, cancellationToken);
+        var result = await _employmentService.GetEmploymentAsync(id, cancellationToken);
 
-        return employmentResult.Match(dto => Ok(dto), ToProblem);
+        return result.Match(model => Ok(model), ToProblem);
     }
 
     [HttpGet]
-    public async Task<ActionResult<PaginationResult<EmploymentDto>>> GetCollection([FromQuery] EmploymentsQueryParameters query,
+    public async Task<ActionResult<PaginationResult<EmploymentModel>>> GetCollection([FromQuery] EmploymentsQueryParameters query,
         CancellationToken cancellationToken)
     {
-        var collectionResult = await _employmentService.GetEmploymentsAsync(query, cancellationToken);
+        var result = await _employmentService.GetEmploymentsAsync(query, cancellationToken);
 
-        return collectionResult.Match(dto => Ok(dto), ToProblem);
+        return result.Match(model => Ok(model), ToProblem);
     }
 
     [HttpPost]
-    public async Task<ActionResult<EmploymentDto>> Create(CreateEmploymentDto createEmploymentDto,
+    public async Task<ActionResult<EmploymentModel>> Create(CreateEmploymentModel request,
         CancellationToken cancellationToken)
     {
-        var employmentResult = await _employmentService.CreateAsync(createEmploymentDto, cancellationToken);
+        var result = await _employmentService.CreateAsync(request, cancellationToken);
 
-        return employmentResult.Match(dto => CreatedAtAction(nameof(Get), new { id = dto.Id }, dto), ToProblem);
+        return result.Match(model => CreatedAtAction(nameof(Get), new { id = model.Id }, model), ToProblem);
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult> Update(string id, UpdateEmploymentDto updateEmploymentDto,
+    public async Task<ActionResult> Update(string id, UpdateEmploymentModel request,
         CancellationToken cancellationToken)
     {
-        var result = await _employmentService.UpdateAsync(id, updateEmploymentDto, cancellationToken);
+        var result = await _employmentService.UpdateAsync(id, request, cancellationToken);
 
         return result.Match(NoContent, ToProblem);
     }

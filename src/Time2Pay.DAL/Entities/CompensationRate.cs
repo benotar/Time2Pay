@@ -1,4 +1,4 @@
-﻿using Time2Pay.DAL.Enums;
+﻿using Time2Pay.Shared.Enums;
 
 namespace Time2Pay.DAL.Entities;
 

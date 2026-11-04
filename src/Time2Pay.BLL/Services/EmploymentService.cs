@@ -13,18 +13,18 @@ namespace Time2Pay.BLL.Services;
 public sealed class EmploymentService : IEmploymentService
 {
     private readonly Time2PayDbContext _dbContext;
-    private readonly IValidator<CreateEmploymentDto> _createValidator;
-    private readonly IValidator<UpdateEmploymentDto> _updateValidator;
+    private readonly IValidator<CreateEmploymentModel> _createValidator;
+    private readonly IValidator<UpdateEmploymentModel> _updateValidator;
 
-    public EmploymentService(Time2PayDbContext dbContext, IValidator<CreateEmploymentDto> createValidator,
-        IValidator<UpdateEmploymentDto> updateValidator)
+    public EmploymentService(Time2PayDbContext dbContext, IValidator<CreateEmploymentModel> createValidator,
+        IValidator<UpdateEmploymentModel> updateValidator)
     {
         _dbContext = dbContext;
         _createValidator = createValidator;
         _updateValidator = updateValidator;
     }
 
-    public async Task<Result<EmploymentDto>> GetEmploymentAsync(string id, CancellationToken cancellationToken)
+    public async Task<Result<EmploymentModel>> GetEmploymentAsync(string id, CancellationToken cancellationToken)
     {
         var employment = await _dbContext.Employments
             .AsNoTracking()
@@ -34,13 +34,13 @@ public sealed class EmploymentService : IEmploymentService
 
         if (employment is null)
         {
-            return Result.Failure<EmploymentDto>(EmploymentErrors.NotFound(id));
+            return Result.Failure<EmploymentModel>(EmploymentErrors.NotFound(id));
         }
 
         return employment;
     }
 
-    public async Task<Result<PaginationResult<EmploymentDto>>> GetEmploymentsAsync(EmploymentsQueryParameters query,
+    public async Task<Result<PaginationResult<EmploymentModel>>> GetEmploymentsAsync(EmploymentsQueryParameters query,
         CancellationToken cancellationToken)
     {
         var employments = await _dbContext.Employments
@@ -53,16 +53,16 @@ public sealed class EmploymentService : IEmploymentService
         return employments;
     }
 
-    public async Task<Result<EmploymentDto>> CreateAsync(CreateEmploymentDto dto, CancellationToken cancellationToken)
+    public async Task<Result<EmploymentModel>> CreateAsync(CreateEmploymentModel model, CancellationToken cancellationToken)
     {
-        var validationResult = await _createValidator.ValidateAsync(dto, cancellationToken);
+        var validationResult = await _createValidator.ValidateAsync(model, cancellationToken);
 
         if (!validationResult.IsValid)
         {
-            return Result.Failure<EmploymentDto>(ValidationViolation.FromResult(validationResult));
+            return Result.Failure<EmploymentModel>(ValidationViolation.FromResult(validationResult));
         }
 
-        var employment = dto.ToEntity();
+        var employment = model.ToEntity();
 
         _dbContext.Employments.Add(employment);
 
@@ -71,9 +71,9 @@ public sealed class EmploymentService : IEmploymentService
         return employment.ToDto();
     }
 
-    public async Task<Result> UpdateAsync(string id, UpdateEmploymentDto dto, CancellationToken cancellationToken)
+    public async Task<Result> UpdateAsync(string id, UpdateEmploymentModel model, CancellationToken cancellationToken)
     {
-        var validationResult = await _updateValidator.ValidateAsync(dto, cancellationToken);
+        var validationResult = await _updateValidator.ValidateAsync(model, cancellationToken);
 
         if (!validationResult.IsValid)
         {
@@ -87,7 +87,7 @@ public sealed class EmploymentService : IEmploymentService
             return Result.Failure(EmploymentErrors.NotFound(id));
         }
 
-        employment.UpdateFromDto(dto);
+        employment.UpdateFromModel(model);
 
         await _dbContext.SaveChangesAsync(cancellationToken);
 
