@@ -7,5 +7,5 @@ public interface IWorkDayService
 {
     Task<Result<WorkDayModel>> GetWorkDayAsync(string id, CancellationToken cancellationToken);
 
-    Task<Result<WorkDayModel>> CreateAsync(CreateWorkDayModel request, CancellationToken cancellationToken);
+    Task<Result<WorkDayModel>> CreateAsync(CreateWorkDayModel model, CancellationToken cancellationToken);
 }

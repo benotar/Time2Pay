@@ -12,7 +12,12 @@ public static class Constants
     #region BLL
 
     public const int MinPageSize = 1;
-    public const int MaxPageSize = 100000;
+    public const int MaxPageSize = 100;
+
+    public const string RequiredMessage = "The value is required";
+    public const string IdPrefixMessage = "The Id must start with respective prefix";
+    public const string NotNullMessage = "The value must not be null";
+    public const string NotContainsSecondsMessage = "The value must not contain seconds";
 
     #endregion
 
@@ -30,7 +35,7 @@ public static class Constants
 
     // Comment
     public const int CommentMaxLength = 500;
-    
+
     public const string ApplicationSchema = "time_2_pay";
 
     public const string DatabaseSection = "Database";

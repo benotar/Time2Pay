@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using Time2Pay.DTO.Common;
@@ -67,5 +68,11 @@ public static class Extensions
             PageSize = pageSize,
             TotalCount = totalCount
         };
+    }
+
+    public static IRuleBuilderOptions<T, TimeOnly?> TimeOnlyWithoutSeconds<T>(this IRuleBuilder<T, TimeOnly?> ruleBuilder)
+    {
+        return ruleBuilder.Must(time => time is null || time.Value.Ticks % TimeSpan.TicksPerMinute == 0)
+            .WithMessage(Constants.NotContainsSecondsMessage);
     }
 }

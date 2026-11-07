@@ -11,6 +11,7 @@ public sealed record WorkDayModel
     public TimeOnly? StartedAt { get; init; }
     public TimeOnly? EndedAt { get; init; }
     public required int BreakMinutes { get; init; }
+    public int? DurationMinutes { get; set; }
     public string? Comment { get; init; }
     public required DateTimeOffset CreatedAtUtc { get; init; }
     public DateTimeOffset? LastModifiedAtUtc { get; init; }

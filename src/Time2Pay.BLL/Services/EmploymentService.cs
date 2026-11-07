@@ -12,8 +12,8 @@ namespace Time2Pay.BLL.Services;
 
 public sealed class EmploymentService : IEmploymentService
 {
-    private readonly Time2PayDbContext _dbContext;
     private readonly IValidator<CreateEmploymentModel> _createValidator;
+    private readonly Time2PayDbContext _dbContext;
     private readonly IValidator<UpdateEmploymentModel> _updateValidator;
 
     public EmploymentService(Time2PayDbContext dbContext, IValidator<CreateEmploymentModel> createValidator,
@@ -26,18 +26,18 @@ public sealed class EmploymentService : IEmploymentService
 
     public async Task<Result<EmploymentModel>> GetEmploymentAsync(string id, CancellationToken cancellationToken)
     {
-        var employment = await _dbContext.Employments
+        var model = await _dbContext.Employments
             .AsNoTracking()
             .Where(emp => emp.Id == id)
-            .Select(EmploymentMapping.ProjectToDto())
+            .Select(EmploymentMapping.ProjectToModel())
             .FirstOrDefaultAsync(cancellationToken);
 
-        if (employment is null)
+        if (model is null)
         {
             return Result.Failure<EmploymentModel>(EmploymentErrors.NotFound(id));
         }
 
-        return employment;
+        return model;
     }
 
     public async Task<Result<PaginationResult<EmploymentModel>>> GetEmploymentsAsync(EmploymentsQueryParameters query,
@@ -47,7 +47,7 @@ public sealed class EmploymentService : IEmploymentService
             .AsNoTracking()
             .WhereAnyContains(query.Search, emp => emp.Name, emp => emp.Description)
             .OrderBy(emp => emp.CreatedAtUtc)
-            .Select(EmploymentMapping.ProjectToDto())
+            .Select(EmploymentMapping.ProjectToModel())
             .CreatePaginationResultAsync(query.Page, query.PageSize, cancellationToken);
 
         return employments;
@@ -62,13 +62,13 @@ public sealed class EmploymentService : IEmploymentService
             return Result.Failure<EmploymentModel>(ValidationViolation.FromResult(validationResult));
         }
 
-        var employment = model.ToEntity();
+        var entity = model.ToEntity();
 
-        _dbContext.Employments.Add(employment);
+        _dbContext.Employments.Add(entity);
 
         await _dbContext.SaveChangesAsync(cancellationToken);
 
-        return employment.ToDto();
+        return entity.ToModel();
     }
 
     public async Task<Result> UpdateAsync(string id, UpdateEmploymentModel model, CancellationToken cancellationToken)

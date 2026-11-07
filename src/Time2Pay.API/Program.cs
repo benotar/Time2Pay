@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Npgsql;
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
@@ -11,9 +12,13 @@ using Time2Pay.DAL;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers(options =>
-{
-    options.ReturnHttpNotAcceptable = true;
-});
+    {
+        options.ReturnHttpNotAcceptable = true;
+    })
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 
 builder.Services.AddProblemDetails(options =>
 {

@@ -20,14 +20,14 @@ public static class EmploymentMapping
 
     private static readonly Func<Employment, EmploymentModel> CompiledProjection = Projection.Compile();
 
-    public static Expression<Func<Employment, EmploymentModel>> ProjectToDto()
+    public static Expression<Func<Employment, EmploymentModel>> ProjectToModel()
     {
         return Projection;
     }
 
-    public static EmploymentModel ToDto(this Employment employment)
+    public static EmploymentModel ToModel(this Employment entity)
     {
-        return CompiledProjection(employment);
+        return CompiledProjection(entity);
     }
 
     public static Employment ToEntity(this CreateEmploymentModel model)
