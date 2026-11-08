@@ -1,2 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\Time2Pay.Shared\Time2Pay.Shared.csproj" />
+    </ItemGroup>
 </Project>

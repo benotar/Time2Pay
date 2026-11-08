@@ -5,4 +5,8 @@
         <ProjectReference Include="..\Time2Pay.DTO\Time2Pay.DTO.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+    </ItemGroup>
+
 </Project>

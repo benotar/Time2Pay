@@ -1,25 +1,39 @@
+using System.Text.Json.Serialization;
 using Npgsql;
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Time2Pay.API;
+using Time2Pay.API.Middleware;
 using Time2Pay.BLL;
 using Time2Pay.DAL;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers(options =>
+    {
+        options.ReturnHttpNotAcceptable = true;
+    })
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
+
+builder.Services.AddProblemDetails(options =>
 {
-    options.ReturnHttpNotAcceptable = true;
+    options.CustomizeProblemDetails = context =>
+        context.ProblemDetails.Extensions.TryAdd("requestId", context.HttpContext.TraceIdentifier);
 });
+
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 builder.Services.AddOpenApi();
 
 builder.Services
     .AddDallServices()
     .AddDatabase(builder.Environment.IsDevelopment())
-    .AddServices();
+    .AddBll();
 
 builder.Services.AddOpenTelemetry()
     .ConfigureResource(resource => resource.AddService(builder.Environment.ApplicationName))
@@ -47,6 +61,8 @@ if (app.Environment.IsDevelopment())
 
     await app.ApplyMigrationsAsync();
 }
+
+app.UseExceptionHandler();
 
 app.MapControllers();
 

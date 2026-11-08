@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace Time2Pay.DAL.Enums;
+namespace Time2Pay.Shared.Enums;
 
 public enum Currency
 {
