@@ -36,9 +36,8 @@ public class WorkDayService : IWorkDayService
 
         return model;
     }
-
-    // TODO Make it idempotent for the user. One user can have only one workday for the respective employment
-    public async Task<Result<WorkDayModel>> CreateAsync(CreateWorkDayModel model, CancellationToken cancellationToken)
+    
+    public async Task<Result<WorkDayModel>> CreateAsync(string userId, CreateWorkDayModel model, CancellationToken cancellationToken)
     {
         var validationResult = await _createValidator.ValidateAsync(model, cancellationToken);
 
@@ -47,13 +46,29 @@ public class WorkDayService : IWorkDayService
             return Result.Failure<WorkDayModel>(ValidationViolation.FromResult(validationResult));
         }
 
-        var isEmploymentExists = await _dbContext.Employments.AnyAsync(emp => model.EmploymentId == emp.Id, cancellationToken);
-
-        if (!isEmploymentExists)
+        var employment = await _dbContext.Employments
+            .Where(emp => emp.Id == model.EmploymentId)
+            .Select(emp => new
+            {
+                emp.UserId,
+                HasWorkDay = emp.WorkDays.Any(wd => wd.Date == model.Date)
+            }).FirstOrDefaultAsync(cancellationToken);
+        
+        if (employment is null)
         {
             return Result.Failure<WorkDayModel>(EmploymentErrors.NotFound(model.EmploymentId));
         }
 
+        if (employment.UserId != userId)
+        {
+            return Result.Failure<WorkDayModel>(EmploymentErrors.Forbidden(userId, model.EmploymentId));
+        }
+
+        if (employment.HasWorkDay)
+        {
+            return Result.Failure<WorkDayModel>(WorkDayErrors.Conflict(userId, model.EmploymentId));
+        }
+        
         var entity = model.ToEntity();
 
         _dbContext.WorkDays.Add(entity);

@@ -27,7 +27,8 @@ public class WorkDayController : BaseController
     [HttpPost]
     public async Task<IActionResult> Create(CreateWorkDayModel request, CancellationToken cancellationToken)
     {
-        var result = await _workDayService.CreateAsync(request, cancellationToken);
+        // TODO Add userId
+        var result = await _workDayService.CreateAsync("",request, cancellationToken);
 
         return result.Match(model => CreatedAtAction(nameof(Get), new { id = model.Id }, model), ToProblem);
     }

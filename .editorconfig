@@ -447,3 +447,6 @@ dotnet_diagnostic.IDE0060.severity = none
 
 # S4487: Remove this unread private field '_workDayService' or refactor the code to use its value.
 dotnet_diagnostic.S4487.severity = none
+
+# IDE0161: Convert to file-scoped namespace
+dotnet_diagnostic.IDE0161.severity = none

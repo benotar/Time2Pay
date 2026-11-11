@@ -57,6 +57,11 @@ namespace Time2Pay.DAL.Migrations.Time2Pay
                         .HasColumnType("date")
                         .HasColumnName("start_date");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("user_id");
+
                     b.HasKey("Id")
                         .HasName("pk_employments");
 
@@ -141,11 +146,16 @@ namespace Time2Pay.DAL.Migrations.Time2Pay
             modelBuilder.Entity("Time2Pay.DAL.Entities.WorkDay", b =>
                 {
                     b.HasOne("Time2Pay.DAL.Entities.Employment", null)
-                        .WithMany()
+                        .WithMany("WorkDays")
                         .HasForeignKey("EmploymentId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_work_days_employments_employment_id");
+                });
+
+            modelBuilder.Entity("Time2Pay.DAL.Entities.Employment", b =>
+                {
+                    b.Navigation("WorkDays");
                 });
 #pragma warning restore 612, 618
         }
