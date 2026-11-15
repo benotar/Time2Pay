@@ -5,6 +5,7 @@ using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using Scalar.AspNetCore;
 using Time2Pay.API;
 using Time2Pay.API.Middleware;
 using Time2Pay.BLL;
@@ -93,6 +94,12 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+
+    app.MapScalarApiReference("/docs", options =>
+    {
+        options.WithTitle("Time2Pay API")
+            .ForceDarkMode();
+    });
 
     // app.UseSwagger();
     // app.UseSwaggerUI(options =>
