@@ -6,6 +6,7 @@ public static class Constants
 
     public const string EmploymentsRoute = "employments";
     public const string WorkDaysRoute = "workdays";
+    public const string UsersRoute = "users";
 
     #endregion
 
@@ -30,6 +31,9 @@ public static class Constants
     public const int NameMaxLength = 100;
     public const int NameMinLength = 3;
 
+    // Email
+    public const int EmailMaxLength = 300;
+    
     // Description
     public const int DescriptionMaxLength = 500;
 
