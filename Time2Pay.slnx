@@ -9,6 +9,7 @@
     <Folder Name="/docker/">
         <File Path=".dockerignore" />
         <File Path="compose.yaml" />
+        <File Path="src/Time2Pay.API/Dockerfile" />
     </Folder>
     <Folder Name="/scripts/">
         <File Path="scripts/dev-infra.ps1" />
