@@ -450,3 +450,6 @@ dotnet_diagnostic.S4487.severity = none
 
 # IDE0161: Convert to file-scoped namespace
 dotnet_diagnostic.IDE0161.severity = none
+
+# CA1305: 
+dotnet_diagnostic.CA1305.severity = none
