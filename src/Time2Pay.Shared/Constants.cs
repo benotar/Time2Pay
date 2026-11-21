@@ -1,4 +1,6 @@
-﻿namespace Time2Pay.Shared;
+﻿using Time2Pay.Shared.Enums;
+
+namespace Time2Pay.Shared;
 
 public static class Constants
 {
@@ -6,6 +8,7 @@ public static class Constants
 
     public const string EmploymentsRoute = "employments";
     public const string WorkDaysRoute = "workdays";
+    public const string UsersRoute = "users";
 
     #endregion
 
@@ -29,6 +32,9 @@ public static class Constants
     // Name
     public const int NameMaxLength = 100;
     public const int NameMinLength = 3;
+
+    // Email
+    public const int EmailMaxLength = 300;
 
     // Description
     public const int DescriptionMaxLength = 500;
@@ -54,23 +60,38 @@ public static class Constants
 
     // WorkDays constraints
     public const string WorkDaysDayTypeIsValidConstraintName = "ck_work_days_day_type_is_valid";
-    public const string WorkDaysDayTypeIsValidConstraint = "day_type BETWEEN 1 AND 4";
+
+    public const string WorkDaysDayTypeIsValidConstraint =
+        $"day_type IN ('{nameof(DayType.Work)}', '{nameof(DayType.Vacation)}', '{nameof(DayType.SickLeave)}', '{nameof(DayType.DayOff)}')";
 
     public const string WorkDaysBreakMinutesConstraintName = "ck_work_days_break_minutes_non_negative";
     public const string WorkDaysBreakMinutesConstraint = "break_minutes >= 0";
 
     public const string WorkDaysTimesMatchDayTypeConstraintName = "ck_work_days_times_match_day_type";
 
-    public const string WorkDaysTimesMatchDayTypeConstraint = """
-                                                              (day_type = 1 AND started_at IS NOT NULL AND ended_at IS NOT NULL) 
-                                                              OR (day_type <> 1 AND started_at IS NULL AND ended_at IS NULL)
-                                                              """;
+    public const string WorkDaysTimesMatchDayTypeConstraint = $"""
+                                                               (day_type = '{nameof(DayType.Work)}' AND started_at IS NOT NULL AND ended_at IS NOT NULL) 
+                                                               OR (day_type <> '{nameof(DayType.Work)}' AND started_at IS NULL AND ended_at IS NULL)
+                                                               """;
 
     public const string WorkDaysEndedAfterStartedConstraintName = "ck_work_days_ended_after_started";
     public const string WorkDaysEndedAfterStartedConstraint = "ended_at > started_at";
 
     public const string WorkDaysBreakWithinShiftConstraintName = "ck_work_days_break_within_shift";
     public const string WorkDaysBreakWithinShiftConstraint = $"break_minutes <= {WorkDayShiftTime}";
+
+    public const string BtreeGist = "btree_gist";
+
+    // CompensationRates constraints
+    public const string CompensationRatesRateTypeIsValidConstraintName = "ck_compensation_rates_rate_type_is_valid";
+
+    public const string CompensationRatesRateTypeIsValidConstraint =
+        $"rate_type IN ('{nameof(RateType.Hourly)}', '{nameof(RateType.Monthly)}')";
+
+    public const string CompensationRatesCurrencyIsValidConstraintName = "ck_compensation_rates_currency_is_valid";
+
+    public const string CompensationRatesCurrencyIsValidConstraint =
+        $"currency IN ('{nameof(Currency.Uah)}', '{nameof(Currency.Usd)}', '{nameof(Currency.Eur)}')";
 
     #endregion
 }

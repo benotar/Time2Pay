@@ -24,11 +24,11 @@ public sealed class EmploymentService : IEmploymentService
         _updateValidator = updateValidator;
     }
 
-    public async Task<Result<EmploymentModel>> GetEmploymentAsync(string id, CancellationToken cancellationToken)
+    public async Task<Result<EmploymentModel>> GetEmploymentAsync(string userId, string id, CancellationToken cancellationToken)
     {
         var model = await _dbContext.Employments
             .AsNoTracking()
-            .Where(emp => emp.Id == id)
+            .Where(emp => emp.UserId == userId && emp.Id == id)
             .Select(EmploymentMapping.ProjectToModel())
             .FirstOrDefaultAsync(cancellationToken);
 
@@ -40,11 +40,13 @@ public sealed class EmploymentService : IEmploymentService
         return model;
     }
 
-    public async Task<Result<PaginationResult<EmploymentModel>>> GetEmploymentsAsync(EmploymentsQueryParameters query,
+    public async Task<Result<PaginationResult<EmploymentModel>>> GetEmploymentsAsync(string userId,
+        EmploymentsQueryParameters query,
         CancellationToken cancellationToken)
     {
         var employments = await _dbContext.Employments
             .AsNoTracking()
+            .Where(emp => emp.UserId == userId)
             .WhereAnyContains(query.Search, emp => emp.Name, emp => emp.Description)
             .OrderBy(emp => emp.CreatedAtUtc)
             .Select(EmploymentMapping.ProjectToModel())
@@ -53,7 +55,8 @@ public sealed class EmploymentService : IEmploymentService
         return employments;
     }
 
-    public async Task<Result<EmploymentModel>> CreateAsync(CreateEmploymentModel model, CancellationToken cancellationToken)
+    public async Task<Result<EmploymentModel>> CreateAsync(string userId, CreateEmploymentModel model,
+        CancellationToken cancellationToken)
     {
         var validationResult = await _createValidator.ValidateAsync(model, cancellationToken);
 
@@ -62,7 +65,7 @@ public sealed class EmploymentService : IEmploymentService
             return Result.Failure<EmploymentModel>(ValidationViolation.FromResult(validationResult));
         }
 
-        var entity = model.ToEntity();
+        var entity = model.ToEntity(userId);
 
         _dbContext.Employments.Add(entity);
 
@@ -71,7 +74,8 @@ public sealed class EmploymentService : IEmploymentService
         return entity.ToModel();
     }
 
-    public async Task<Result> UpdateAsync(string id, UpdateEmploymentModel model, CancellationToken cancellationToken)
+    public async Task<Result> UpdateAsync(string userId, string id, UpdateEmploymentModel model,
+        CancellationToken cancellationToken)
     {
         var validationResult = await _updateValidator.ValidateAsync(model, cancellationToken);
 
@@ -80,7 +84,8 @@ public sealed class EmploymentService : IEmploymentService
             return Result.Failure(ValidationViolation.FromResult(validationResult));
         }
 
-        var employment = await _dbContext.Employments.FirstOrDefaultAsync(emp => emp.Id == id, cancellationToken);
+        var employment = await _dbContext.Employments.FirstOrDefaultAsync(emp => emp.UserId == userId && emp.Id == id,
+            cancellationToken);
 
         if (employment is null)
         {
@@ -94,9 +99,10 @@ public sealed class EmploymentService : IEmploymentService
         return Result.Success();
     }
 
-    public async Task<Result> DeleteAsync(string id, CancellationToken cancellationToken)
+    public async Task<Result> DeleteAsync(string userId, string id, CancellationToken cancellationToken)
     {
-        var employment = await _dbContext.Employments.FirstOrDefaultAsync(emp => emp.Id == id, cancellationToken);
+        var employment = await _dbContext.Employments.FirstOrDefaultAsync(emp => emp.UserId == userId && emp.Id == id,
+            cancellationToken);
 
         if (employment is null)
         {

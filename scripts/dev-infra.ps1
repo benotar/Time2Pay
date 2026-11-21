@@ -6,7 +6,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-$services = @("time2pay.postgres", "time2pay.aspire-dashboard")
+$services = @("time2pay.postgres", "time2pay.aspire-dashboard", "time2pay.keycloak")
 
 $root = Split-Path -Parent $PSScriptRoot
 $composeFile = Join-Path $root "compose.yaml"
@@ -27,6 +27,7 @@ switch ($Action)
         Invoke-Compose up -d @services
         Write-Host ""
         Write-Host "Aspire Dashboard: http://localhost:18888" -ForegroundColor Green
+        Write-Host "Keycloak: http://localhost:8080" -ForegroundColor Green
     }
     "down" {
         Invoke-Compose stop @services

@@ -17,8 +17,12 @@ public static class DependencyInjection
 {
     extension(IServiceCollection services)
     {
-        public IServiceCollection AddDatabase(bool isDevelopment)
+        public IServiceCollection AddDall(bool isDevelopment)
         {
+            services.AddSingleton<IDateTimeOffsetProvider, DateTimeOffsetProvider>();
+
+            services.AddScoped<ISaveChangesInterceptor, UpdateAuditEntityInterceptor>();
+
             services.AddDbContext<Time2PayDbContext>((sp, options) =>
             {
                 var configuration = sp.GetRequiredService<IConfiguration>();
@@ -73,6 +77,7 @@ public static class DependencyInjection
 
                 return;
 
+                // Add UserId manually when the data is seeded
                 static Employment CreateEmployment() => new Employment
                 {
                     Id = IdGenerator.PrefixId<Employment>(),
@@ -95,15 +100,6 @@ public static class DependencyInjection
                         : Task.FromResult(employments.FirstOrDefault(namePredicate));
                 }
             });
-
-            return services;
-        }
-
-        public IServiceCollection AddDallServices()
-        {
-            services.AddSingleton<IDateTimeOffsetProvider, DateTimeOffsetProvider>();
-
-            services.AddScoped<ISaveChangesInterceptor, UpdateAuditEntityInterceptor>();
 
             return services;
         }

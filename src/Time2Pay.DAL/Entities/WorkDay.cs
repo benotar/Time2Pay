@@ -20,5 +20,7 @@ public sealed class WorkDay : AuditEntity, IPrefix
 
     public string? Comment { get; set; }
 
+    public Employment Employment { get; set; }
+
     public static string Prefix => "wday_";
 }

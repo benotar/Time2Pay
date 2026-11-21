@@ -1,19 +1,20 @@
 ﻿services:
   time2pay:
     image: ${DOCKER_REGISTRY-}time2pay
+    container_name: time2pay
     build:
       context: .
       dockerfile: src/Time2Pay.API/Dockerfile
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
-      - ASPNETCORE_HTTPS_PORTS=8081
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: '8080'
+      ASPNETCORE_HTTPS_PORTS: '8081'
       # Seq
       # - OTEL_EXPORTER_OTLP_ENDPOINT=http://time2pay.seq:5341/ingest/otlp
       # - OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
       # Aspire Dashboard
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://time2pay.aspire-dashboard:18889
-      - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://time2pay.aspire-dashboard:18889
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
     ports:
       - '5228:8080'
       - '5229:8081'
@@ -23,6 +24,7 @@
   
   time2pay.postgres:
     image: postgres:18
+    container_name: time2pay.postgres
     environment:
       POSTGRES_DB: time2pay
       POSTGRES_USER: postgres
@@ -32,25 +34,39 @@
     ports:
       - '5432:5432'
   
-  time2pay.seq:
-    image: datalust/seq:2026.1.17182
-    environment:
-      ACCEPT_EULA: "Y"
-      SEQ_FIRSTRUN_NOAUTHENTICATION: "true"
-    volumes:
-      - seq_data:/data
-    ports:
-      - '8080:80'
-      - '5341:5341'
+#  time2pay.seq:
+#    image: datalust/seq:2026.1.17182
+#    environment:
+#      ACCEPT_EULA: "Y"
+#      SEQ_FIRSTRUN_NOAUTHENTICATION: "true"
+#    volumes:
+#      - seq_data:/data
+#    ports:
+#      - '8080:80'
+#      - '5341:5341'
   
   time2pay.aspire-dashboard:
     image: mcr.microsoft.com/dotnet/aspire-dashboard:13
+    container_name: time2pay.aspire-dashboard
     environment:
       DOTNET_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS: true
     ports:
       - '18888:18888'
       - '18889:18889'
-
+    
+  time2pay.keycloak:
+    image: quay.io/keycloak/keycloak:26.8.2
+    container_name: time2pay.keycloak
+    command: start-dev
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+    ports:
+      - '8080:8080'
+   
 volumes:
   postgres_data:
   seq_data:
+  keycloak_data:

@@ -1,69 +1,55 @@
-using System.Text.Json.Serialization;
-using Npgsql;
-using OpenTelemetry;
-using OpenTelemetry.Metrics;
-using OpenTelemetry.Resources;
-using OpenTelemetry.Trace;
+using System.Security.Claims;
+using Microsoft.OpenApi;
 using Scalar.AspNetCore;
 using Time2Pay.API;
-using Time2Pay.API.Middleware;
 using Time2Pay.BLL;
 using Time2Pay.DAL;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers(options =>
-    {
-        options.ReturnHttpNotAcceptable = true;
-    })
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-    });
-
-builder.Services.AddProblemDetails(options =>
-{
-    options.CustomizeProblemDetails = context =>
-        context.ProblemDetails.Extensions.TryAdd("requestId", context.HttpContext.TraceIdentifier);
-});
-
-builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-
-builder.Services.AddOpenApi();
-
 builder.Services
-    .AddDallServices()
-    .AddDatabase(builder.Environment.IsDevelopment())
+    .AddDall(builder.Environment.IsDevelopment())
     .AddBll();
 
-builder.Services.AddOpenTelemetry()
-    .ConfigureResource(resource => resource.AddService(builder.Environment.ApplicationName))
-    .WithTracing(tracing => tracing
-        .AddHttpClientInstrumentation()
-        .AddAspNetCoreInstrumentation()
-        .AddNpgsql())
-    .WithMetrics(metrics => metrics
-        .AddHttpClientInstrumentation()
-        .AddAspNetCoreInstrumentation()
-        .AddRuntimeInstrumentation())
-    .UseOtlpExporter();
-
-builder.Logging.AddOpenTelemetry(options =>
-{
-    options.IncludeScopes = true;
-    options.IncludeFormattedMessage = true;
-});
+builder.AddApi();
 
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.MapOpenApi("/openapi/v1.json");
 
     app.MapScalarApiReference("/docs", options =>
     {
-        options.WithTitle("Time2Pay API")
-            .ForceDarkMode();
+        options
+            .WithTitle("Time2Pay API")
+
+            // Appearance
+            .WithTheme(ScalarTheme.DeepSpace)
+            .ForceDarkMode()
+            .HideDarkModeToggle()
+
+            // Sidebar
+            .ExpandAllTags()
+            .SortTagsAlphabetically()
+            .SortOperationsByMethod()
+
+            // Operations & schemas
+            .ShowOperationId()
+            .PreserveSchemaPropertyOrder()
+
+            // Code samples
+            .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
+
+        // Authentication
+        var keycloakClientId = builder.Configuration["Keycloak:ClientId"]!;
+
+        options.AddAuthorizationCodeFlow(nameof(SecuritySchemeType.OAuth2), flow =>
+        {
+            flow.WithClientId(keycloakClientId)
+                .WithSelectedScopes("openid", "profile")
+                .WithPkce(Pkce.Sha256);
+        });
     });
 
     await app.ApplyMigrationsAsync();
@@ -71,6 +57,25 @@ if (app.Environment.IsDevelopment())
 
 app.UseExceptionHandler();
 
+app.UseAuthentication();
+
+app.UseAuthorization();
+
 app.MapControllers();
+
+if (app.Environment.IsDevelopment())
+{
+    app.MapGet("users/me", (ClaimsPrincipal user) =>
+        {
+            return Results.Ok(new
+            {
+                UserId = user.FindFirstValue(ClaimTypes.NameIdentifier),
+                Email = user.FindFirstValue(ClaimTypes.Email),
+                Name = user.FindFirstValue("preferred_username"),
+                Claims = user.Claims.Select(c => new { c.Type, c.Value })
+            });
+        })
+        .RequireAuthorization();
+}
 
 await app.RunAsync();

@@ -20,11 +20,13 @@ public class WorkDayService : IWorkDayService
         _createValidator = createValidator;
     }
 
-    // TODO Add user validation. Return data only by current user
-    public async Task<Result<WorkDayModel>> GetWorkDayAsync(string id, CancellationToken cancellationToken)
+    public async Task<Result<WorkDayModel>> GetWorkDayAsync(string userId, string employmentId, string id,
+        CancellationToken cancellationToken)
     {
         var model = await _dbContext.WorkDays
             .AsNoTracking()
+            .Where(wd => wd.Employment.UserId == userId)
+            .Where(wd => wd.EmploymentId == employmentId)
             .Where(wd => wd.Id == id)
             .Select(WorkDayMapping.ProjectToModel())
             .FirstOrDefaultAsync(cancellationToken);
@@ -37,8 +39,8 @@ public class WorkDayService : IWorkDayService
         return model;
     }
 
-    // TODO Make it idempotent for the user. One user can have only one workday for the respective employment
-    public async Task<Result<WorkDayModel>> CreateAsync(CreateWorkDayModel model, CancellationToken cancellationToken)
+    public async Task<Result<WorkDayModel>> CreateAsync(string userId, CreateWorkDayModel model,
+        CancellationToken cancellationToken)
     {
         var validationResult = await _createValidator.ValidateAsync(model, cancellationToken);
 
@@ -47,11 +49,28 @@ public class WorkDayService : IWorkDayService
             return Result.Failure<WorkDayModel>(ValidationViolation.FromResult(validationResult));
         }
 
-        var isEmploymentExists = await _dbContext.Employments.AnyAsync(emp => model.EmploymentId == emp.Id, cancellationToken);
+        var employmentVerify = await _dbContext.Employments
+            .Where(emp => emp.Id == model.EmploymentId)
+            .Select(emp => new
+            {
+                EmployeeId = emp.UserId,
+                HasWorkDay = emp.WorkDays.Any(wd => wd.Date == model.Date)
+            })
+            .FirstOrDefaultAsync(cancellationToken);
 
-        if (!isEmploymentExists)
+        if (employmentVerify is null)
         {
             return Result.Failure<WorkDayModel>(EmploymentErrors.NotFound(model.EmploymentId));
+        }
+
+        if (employmentVerify.EmployeeId != userId)
+        {
+            return Result.Failure<WorkDayModel>(EmploymentErrors.Forbidden(userId, model.EmploymentId));
+        }
+
+        if (employmentVerify.HasWorkDay)
+        {
+            return Result.Failure<WorkDayModel>(WorkDayErrors.Conflict(userId, model.EmploymentId, model.Date));
         }
 
         var entity = model.ToEntity();

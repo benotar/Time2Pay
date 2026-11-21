@@ -12,11 +12,11 @@ public static class DependencyInjection
         public IServiceCollection AddBll()
         {
             services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
-            
+
             services.AddScoped<IEmploymentService, EmploymentService>();
 
             services.AddScoped<IWorkDayService, WorkDayService>();
-            
+
             return services;
         }
     }

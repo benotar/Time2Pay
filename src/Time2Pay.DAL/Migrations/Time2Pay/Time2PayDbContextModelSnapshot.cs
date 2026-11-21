@@ -18,10 +18,68 @@ namespace Time2Pay.DAL.Migrations.Time2Pay
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("time_2_pay")
-                .HasAnnotation("ProductVersion", "10.0.12")
+                .HasAnnotation("ProductVersion", "10.0.15")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
+            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "btree_gist");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("Time2Pay.DAL.Entities.CompensationRate", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("id");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)")
+                        .HasColumnName("amount");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("currency");
+
+                    b.Property<string>("EmploymentId")
+                        .IsRequired()
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("employment_id");
+
+                    b.Property<DateTimeOffset?>("LastModifiedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_modified_at_utc");
+
+                    b.Property<string>("RateType")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("rate_type");
+
+                    b.Property<DateOnly>("ValidFromDate")
+                        .HasColumnType("date")
+                        .HasColumnName("valid_from_date");
+
+                    b.Property<DateOnly?>("ValidToDate")
+                        .HasColumnType("date")
+                        .HasColumnName("valid_to_date");
+
+                    b.HasKey("Id")
+                        .HasName("pk_compensation_rates");
+
+                    b.HasIndex("EmploymentId")
+                        .HasDatabaseName("ix_compensation_rates_employment_id");
+
+                    b.ToTable("compensation_rates", "time_2_pay", t =>
+                        {
+                            t.HasCheckConstraint("ck_compensation_rates_currency_is_valid", "currency IN ('Uah', 'Usd', 'Eur')");
+
+                            t.HasCheckConstraint("ck_compensation_rates_rate_type_is_valid", "rate_type IN ('Hourly', 'Monthly')");
+                        });
+                });
 
             modelBuilder.Entity("Time2Pay.DAL.Entities.Employment", b =>
                 {
@@ -57,6 +115,11 @@ namespace Time2Pay.DAL.Migrations.Time2Pay
                         .HasColumnType("date")
                         .HasColumnName("start_date");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("user_id");
+
                     b.HasKey("Id")
                         .HasName("pk_employments");
 
@@ -90,8 +153,9 @@ namespace Time2Pay.DAL.Migrations.Time2Pay
                         .HasColumnType("date")
                         .HasColumnName("date");
 
-                    b.Property<int>("DayType")
-                        .HasColumnType("integer")
+                    b.Property<string>("DayType")
+                        .IsRequired()
+                        .HasColumnType("text")
                         .HasColumnName("day_type");
 
                     b.Property<int?>("DurationMinutes")
@@ -130,22 +194,39 @@ namespace Time2Pay.DAL.Migrations.Time2Pay
 
                             t.HasCheckConstraint("ck_work_days_break_within_shift", "break_minutes <= (EXTRACT(EPOCH FROM (ended_at - started_at)) / 60)");
 
-                            t.HasCheckConstraint("ck_work_days_day_type_is_valid", "day_type BETWEEN 1 AND 4");
+                            t.HasCheckConstraint("ck_work_days_day_type_is_valid", "day_type IN ('Work', 'Vacation', 'SickLeave', 'DayOff')");
 
                             t.HasCheckConstraint("ck_work_days_ended_after_started", "ended_at > started_at");
 
-                            t.HasCheckConstraint("ck_work_days_times_match_day_type", "(day_type = 1 AND started_at IS NOT NULL AND ended_at IS NOT NULL) \r\nOR (day_type <> 1 AND started_at IS NULL AND ended_at IS NULL)");
+                            t.HasCheckConstraint("ck_work_days_times_match_day_type", "(day_type = 'Work' AND started_at IS NOT NULL AND ended_at IS NOT NULL) \r\nOR (day_type <> 'Work' AND started_at IS NULL AND ended_at IS NULL)");
                         });
                 });
 
-            modelBuilder.Entity("Time2Pay.DAL.Entities.WorkDay", b =>
+            modelBuilder.Entity("Time2Pay.DAL.Entities.CompensationRate", b =>
                 {
                     b.HasOne("Time2Pay.DAL.Entities.Employment", null)
                         .WithMany()
                         .HasForeignKey("EmploymentId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
+                        .HasConstraintName("fk_compensation_rates_employments_employment_id");
+                });
+
+            modelBuilder.Entity("Time2Pay.DAL.Entities.WorkDay", b =>
+                {
+                    b.HasOne("Time2Pay.DAL.Entities.Employment", "Employment")
+                        .WithMany("WorkDays")
+                        .HasForeignKey("EmploymentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
                         .HasConstraintName("fk_work_days_employments_employment_id");
+
+                    b.Navigation("Employment");
+                });
+
+            modelBuilder.Entity("Time2Pay.DAL.Entities.Employment", b =>
+                {
+                    b.Navigation("WorkDays");
                 });
 #pragma warning restore 612, 618
         }

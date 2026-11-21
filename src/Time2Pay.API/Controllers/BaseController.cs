@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using Time2Pay.BLL.Utils;
 
 namespace Time2Pay.API.Controllers;
@@ -6,6 +7,8 @@ namespace Time2Pay.API.Controllers;
 [ApiController]
 public abstract class BaseController : ControllerBase
 {
+    internal string UserId => HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
     protected ActionResult ToProblem(Result result)
     {
         if (result.IsSuccess)
@@ -33,6 +36,7 @@ public abstract class BaseController : ControllerBase
             ErrorType.Validation or ErrorType.Problem => StatusCodes.Status400BadRequest,
             ErrorType.NotFound => StatusCodes.Status404NotFound,
             ErrorType.Conflict => StatusCodes.Status409Conflict,
+            ErrorType.Forbidden => StatusCodes.Status403Forbidden,
             _ => StatusCodes.Status500InternalServerError
         };
 

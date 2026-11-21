@@ -5,7 +5,7 @@ namespace Time2Pay.BLL.Services.Interfaces;
 
 public interface IWorkDayService
 {
-    Task<Result<WorkDayModel>> GetWorkDayAsync(string id, CancellationToken cancellationToken);
+    Task<Result<WorkDayModel>> GetWorkDayAsync(string userId, string employmentId, string id, CancellationToken cancellationToken);
 
-    Task<Result<WorkDayModel>> CreateAsync(CreateWorkDayModel model, CancellationToken cancellationToken);
+    Task<Result<WorkDayModel>> CreateAsync(string userId, CreateWorkDayModel model, CancellationToken cancellationToken);
 }

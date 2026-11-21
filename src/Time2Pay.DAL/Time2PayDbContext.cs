@@ -10,10 +10,14 @@ public sealed class Time2PayDbContext(DbContextOptions<Time2PayDbContext> option
 
     public DbSet<WorkDay> WorkDays { get; set; }
 
+    public DbSet<CompensationRate> CompensationRates { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema(Constants.ApplicationSchema);
 
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(Time2PayDbContext).Assembly);
+
+        modelBuilder.HasPostgresExtension(Constants.BtreeGist);
     }
 }
