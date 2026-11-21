@@ -9,17 +9,19 @@ public class WorkDayConfiguration : IEntityTypeConfiguration<WorkDay>
 {
     public void Configure(EntityTypeBuilder<WorkDay> builder)
     {
-        builder.HasKey(wd => wd.Id);
+        builder.HasKey(day => day.Id);
 
-        builder.Property(wd => wd.Id).HasMaxLength(Constants.IdMaxLength);
+        builder.Property(day => day.Id).HasMaxLength(Constants.IdMaxLength);
 
-        builder.Property(wd => wd.Comment).HasMaxLength(Constants.CommentMaxLength);
+        builder.Property(day => day.Comment).HasMaxLength(Constants.CommentMaxLength);
 
-        builder.Property(wd => wd.DurationMinutes)
+        builder.Property(day => day.DurationMinutes)
             .HasComputedColumnSql(Constants.DurationMinutesComputedColumnSql, true);
 
-        builder.HasIndex(wd => new { wd.EmploymentId, wd.Date })
+        builder.HasIndex(day => new { day.EmploymentId, day.Date })
             .IsUnique();
+
+        builder.Property(day => day.DayType).HasConversion<string>();
 
         builder.ToTable(table =>
         {
@@ -39,9 +41,9 @@ public class WorkDayConfiguration : IEntityTypeConfiguration<WorkDay>
                 Constants.WorkDaysBreakWithinShiftConstraint);
         });
 
-        builder.HasOne<Employment>(wd => wd.Employment)
-            .WithMany(w => w.WorkDays)
-            .HasForeignKey(wd => wd.EmploymentId)
+        builder.HasOne<Employment>(day => day.Employment)
+            .WithMany(emp => emp.WorkDays)
+            .HasForeignKey(day => day.EmploymentId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }
