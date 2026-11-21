@@ -10,6 +10,7 @@ public static class EmploymentMapping
     private static readonly Expression<Func<Employment, EmploymentModel>> Projection = employment => new EmploymentModel
     {
         Id = employment.Id,
+        UserId = employment.UserId,
         Name = employment.Name,
         Description = employment.Description,
         StartDate = employment.StartDate,
@@ -30,11 +31,12 @@ public static class EmploymentMapping
         return CompiledProjection(entity);
     }
 
-    public static Employment ToEntity(this CreateEmploymentModel model)
+    public static Employment ToEntity(this CreateEmploymentModel model, string userId)
     {
         return new Employment
         {
             Id = IdGenerator.PrefixId<Employment>(),
+            UserId = userId,
             Name = model.Name,
             Description = model.Description,
             StartDate = model.StartDate,

@@ -63,16 +63,19 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapGet("users/me", (ClaimsPrincipal user) =>
-    {
-        return Results.Ok(new
+if (app.Environment.IsDevelopment())
+{
+    app.MapGet("users/me", (ClaimsPrincipal user) =>
         {
-            UserId = user.FindFirstValue(ClaimTypes.NameIdentifier),
-            Email = user.FindFirstValue(ClaimTypes.Email),
-            Name = user.FindFirstValue("preferred_username"),
-            Claims = user.Claims.Select(c => new { c.Type, c.Value })
-        });
-    })
-    .RequireAuthorization();
+            return Results.Ok(new
+            {
+                UserId = user.FindFirstValue(ClaimTypes.NameIdentifier),
+                Email = user.FindFirstValue(ClaimTypes.Email),
+                Name = user.FindFirstValue("preferred_username"),
+                Claims = user.Claims.Select(c => new { c.Type, c.Value })
+            });
+        })
+        .RequireAuthorization();
+}
 
 await app.RunAsync();

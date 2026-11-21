@@ -27,6 +27,11 @@ public static class DependencyInjection
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             });
 
+        builder.Services.ConfigureHttpJsonOptions(options =>
+        {
+            options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        });
+
         builder.Services.AddProblemDetails(options =>
         {
             options.CustomizeProblemDetails = context =>
@@ -40,27 +45,7 @@ public static class DependencyInjection
             options.AddDocumentTransformer<KeycloakSecuritySchemeTransformer>();
         });
 
-        builder.Services.AddOptions<KeycloakOptions>()
-            .Bind(builder.Configuration.GetSection(KeycloakOptions.SectionName));
-
-        var keycloakOptions = builder.Configuration.GetSection(KeycloakOptions.SectionName).Get<KeycloakOptions>()!;
-
-        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
-            {
-                options.MetadataAddress = keycloakOptions.MetadataAddress;
-                options.Audience = keycloakOptions.Audience;
-
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidIssuer = keycloakOptions.Issuer
-                };
-
-                // Required for HTTP in development (Keycloak uses HTTP by default in dev mode)
-                options.RequireHttpsMetadata = !builder.Environment.IsDevelopment();
-            });
-
-        builder.Services.AddAuthorization();
+        builder.Services.AddKeycloakAuthentication(builder.Configuration);
 
         builder.Services.AddOpenTelemetry()
             .ConfigureResource(resource => resource.AddService(builder.Environment.ApplicationName))
@@ -79,6 +64,33 @@ public static class DependencyInjection
             options.IncludeScopes = true;
             options.IncludeFormattedMessage = true;
         });
+    }
+
+    private static IServiceCollection AddKeycloakAuthentication(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddOptions<KeycloakOptions>()
+            .Bind(configuration.GetSection(KeycloakOptions.SectionName));
+
+        var keycloakOptions = configuration.GetSection(KeycloakOptions.SectionName).Get<KeycloakOptions>()!;
+
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.MetadataAddress = keycloakOptions.MetadataAddress;
+
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidIssuer = keycloakOptions.Issuer,
+                    ValidAudience = keycloakOptions.Audience
+                };
+
+                // Required for HTTP in development (Keycloak uses HTTP by default in dev mode)
+                options.RequireHttpsMetadata = false;
+            });
+
+        services.AddAuthorization();
+
+        return services;
     }
 
     public static async Task ApplyMigrationsAsync(this WebApplication app)

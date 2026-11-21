@@ -77,6 +77,7 @@ public static class DependencyInjection
 
                 return;
 
+                // Add UserId manually when the data is seeded
                 static Employment CreateEmployment() => new Employment
                 {
                     Id = IdGenerator.PrefixId<Employment>(),

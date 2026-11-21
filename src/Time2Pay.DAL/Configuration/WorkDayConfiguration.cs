@@ -39,7 +39,7 @@ public class WorkDayConfiguration : IEntityTypeConfiguration<WorkDay>
                 Constants.WorkDaysBreakWithinShiftConstraint);
         });
 
-        builder.HasOne<Employment>()
+        builder.HasOne<Employment>(wd => wd.Employment)
             .WithMany(w => w.WorkDays)
             .HasForeignKey(wd => wd.EmploymentId)
             .OnDelete(DeleteBehavior.Restrict);
