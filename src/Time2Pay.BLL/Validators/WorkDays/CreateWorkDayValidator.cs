@@ -1,21 +1,14 @@
 ﻿using FluentValidation;
-using Time2Pay.DAL.Entities;
-using Time2Pay.DTO.WorkDay;
+using Time2Pay.DTO.WorkDays;
 using Time2Pay.Shared;
 using Time2Pay.Shared.Enums;
 
-namespace Time2Pay.BLL.Validators.WorkDay;
+namespace Time2Pay.BLL.Validators.WorkDays;
 
 public class CreateWorkDayValidator : AbstractValidator<CreateWorkDayModel>
 {
     public CreateWorkDayValidator()
     {
-        RuleFor(model => model.EmploymentId)
-            .NotEmpty()
-            .WithMessage(Constants.RequiredMessage)
-            .Must(employmentId => employmentId.StartsWith(Employment.Prefix, StringComparison.InvariantCulture))
-            .WithMessage(Constants.IdPrefixMessage);
-
         RuleFor(model => model.Date)
             .NotEmpty()
             .WithMessage(Constants.RequiredMessage);

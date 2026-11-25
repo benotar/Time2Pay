@@ -14,8 +14,8 @@ public static class DependencyInjection
             services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
 
             services.AddScoped<IEmploymentService, EmploymentService>();
-
             services.AddScoped<IWorkDayService, WorkDayService>();
+            services.AddScoped<ICompensationRateService, CompensationRateService>();
 
             return services;
         }

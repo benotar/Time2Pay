@@ -5,6 +5,7 @@ using Time2Pay.BLL.Mapping.Employments;
 using Time2Pay.BLL.Services.Interfaces;
 using Time2Pay.BLL.Utils;
 using Time2Pay.DAL;
+using Time2Pay.DAL.Providers.Interfaces;
 using Time2Pay.DTO.Common;
 using Time2Pay.DTO.Employments;
 
@@ -13,18 +14,20 @@ namespace Time2Pay.BLL.Services;
 public sealed class EmploymentService : IEmploymentService
 {
     private readonly IValidator<CreateEmploymentModel> _createValidator;
+    private readonly IDateTimeOffsetProvider _dateTimeOffset;
     private readonly Time2PayDbContext _dbContext;
     private readonly IValidator<UpdateEmploymentModel> _updateValidator;
 
-    public EmploymentService(Time2PayDbContext dbContext, IValidator<CreateEmploymentModel> createValidator,
-        IValidator<UpdateEmploymentModel> updateValidator)
+    public EmploymentService(IValidator<CreateEmploymentModel> createValidator, IDateTimeOffsetProvider dateTimeOffset,
+        Time2PayDbContext dbContext, IValidator<UpdateEmploymentModel> updateValidator)
     {
         _dbContext = dbContext;
         _createValidator = createValidator;
         _updateValidator = updateValidator;
+        _dateTimeOffset = dateTimeOffset;
     }
 
-    public async Task<Result<EmploymentModel>> GetEmploymentAsync(string userId, string id, CancellationToken cancellationToken)
+    public async Task<Result<EmploymentModel>> GetByIdAsync(string userId, string id, CancellationToken cancellationToken)
     {
         var model = await _dbContext.Employments
             .AsNoTracking()
@@ -40,11 +43,10 @@ public sealed class EmploymentService : IEmploymentService
         return model;
     }
 
-    public async Task<Result<PaginationResult<EmploymentModel>>> GetEmploymentsAsync(string userId,
-        EmploymentsQueryParameters query,
+    public async Task<Result<PaginationResult<EmploymentModel>>> GetAsync(string userId, CommonQueryParameters query,
         CancellationToken cancellationToken)
     {
-        var employments = await _dbContext.Employments
+        var models = await _dbContext.Employments
             .AsNoTracking()
             .Where(emp => emp.UserId == userId)
             .WhereAnyContains(query.Search, emp => emp.Name, emp => emp.Description)
@@ -52,7 +54,7 @@ public sealed class EmploymentService : IEmploymentService
             .Select(EmploymentMapping.ProjectToModel())
             .CreatePaginationResultAsync(query.Page, query.PageSize, cancellationToken);
 
-        return employments;
+        return models;
     }
 
     public async Task<Result<EmploymentModel>> CreateAsync(string userId, CreateEmploymentModel model,
@@ -101,18 +103,14 @@ public sealed class EmploymentService : IEmploymentService
 
     public async Task<Result> DeleteAsync(string userId, string id, CancellationToken cancellationToken)
     {
-        var employment = await _dbContext.Employments.FirstOrDefaultAsync(emp => emp.UserId == userId && emp.Id == id,
-            cancellationToken);
+        var affectedRows = await _dbContext.Employments.Where(emp => emp.UserId == userId &&
+                                                                     emp.Id == id && !emp.IsDeleted)
+            .ExecuteUpdateAsync(x => x.SetProperty(emp => emp.IsDeleted, true)
+                    .SetProperty(emp => emp.DeletedAtUtc, _dateTimeOffset.UtcNow),
+                cancellationToken);
 
-        if (employment is null)
-        {
-            return Result.Failure(EmploymentErrors.NotFound(id));
-        }
-
-        _dbContext.Employments.Remove(employment);
-
-        await _dbContext.SaveChangesAsync(cancellationToken);
-
-        return Result.Success();
+        return affectedRows == 0
+            ? Result.Failure(EmploymentErrors.NotFound(id))
+            : Result.Success();
     }
 }

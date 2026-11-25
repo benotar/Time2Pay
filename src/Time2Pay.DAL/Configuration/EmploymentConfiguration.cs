@@ -17,6 +17,11 @@ public class EmploymentConfiguration : IEntityTypeConfiguration<Employment>
 
         builder.Property(e => e.Description).HasMaxLength(Constants.DescriptionMaxLength);
 
+        builder.HasQueryFilter(e => !e.IsDeleted);
+
+        builder.HasIndex(e => e.IsDeleted)
+            .HasFilter("is_deleted = false");
+
         builder.ToTable(table => table.HasCheckConstraint(Constants.EmploymentsEndDateAfterStartDateConstraintName,
             Constants.EmploymentsEndDateAfterStartDateConstraint));
     }

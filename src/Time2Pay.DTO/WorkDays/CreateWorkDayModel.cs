@@ -1,10 +1,9 @@
 ﻿using Time2Pay.Shared.Enums;
 
-namespace Time2Pay.DTO.WorkDay;
+namespace Time2Pay.DTO.WorkDays;
 
 public sealed record CreateWorkDayModel
 {
-    public required string EmploymentId { get; init; }
     public required DateOnly Date { get; init; }
     public required DayType DayType { get; init; }
     public TimeOnly? StartedAt { get; init; }

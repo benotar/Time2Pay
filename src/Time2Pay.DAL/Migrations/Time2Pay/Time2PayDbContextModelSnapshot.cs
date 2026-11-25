@@ -92,6 +92,10 @@ namespace Time2Pay.DAL.Migrations.Time2Pay
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at_utc");
 
+                    b.Property<DateTimeOffset?>("DeletedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at_utc");
+
                     b.Property<string>("Description")
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)")
@@ -100,6 +104,10 @@ namespace Time2Pay.DAL.Migrations.Time2Pay
                     b.Property<DateOnly?>("EndDate")
                         .HasColumnType("date")
                         .HasColumnName("end_date");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<DateTimeOffset?>("LastModifiedAtUtc")
                         .HasColumnType("timestamp with time zone")
@@ -122,6 +130,10 @@ namespace Time2Pay.DAL.Migrations.Time2Pay
 
                     b.HasKey("Id")
                         .HasName("pk_employments");
+
+                    b.HasIndex("IsDeleted")
+                        .HasDatabaseName("ix_employments_is_deleted")
+                        .HasFilter("is_deleted = false");
 
                     b.ToTable("employments", "time_2_pay", t =>
                         {
@@ -204,12 +216,14 @@ namespace Time2Pay.DAL.Migrations.Time2Pay
 
             modelBuilder.Entity("Time2Pay.DAL.Entities.CompensationRate", b =>
                 {
-                    b.HasOne("Time2Pay.DAL.Entities.Employment", null)
+                    b.HasOne("Time2Pay.DAL.Entities.Employment", "Employment")
                         .WithMany()
                         .HasForeignKey("EmploymentId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_compensation_rates_employments_employment_id");
+
+                    b.Navigation("Employment");
                 });
 
             modelBuilder.Entity("Time2Pay.DAL.Entities.WorkDay", b =>

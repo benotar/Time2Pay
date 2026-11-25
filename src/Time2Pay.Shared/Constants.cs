@@ -7,8 +7,8 @@ public static class Constants
     #region API
 
     public const string EmploymentsRoute = "employments";
-    public const string WorkDaysRoute = "workdays";
-    public const string UsersRoute = "users";
+    public const string WorkDaysRoute = "employments/{employmentId}/workdays";
+    public const string CompensationRatesRoute = "employments/{employmentId}/rates";
 
     #endregion
 

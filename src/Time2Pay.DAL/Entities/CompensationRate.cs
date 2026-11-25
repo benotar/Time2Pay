@@ -5,16 +5,12 @@ namespace Time2Pay.DAL.Entities;
 public sealed class CompensationRate : AuditEntity, IPrefix
 {
     public string EmploymentId { get; set; }
-
     public RateType RateType { get; set; }
-
     public decimal Amount { get; set; }
-
     public Currency Currency { get; set; }
-
     public DateOnly ValidFromDate { get; set; }
-
     public DateOnly? ValidToDate { get; set; }
+    public Employment Employment { get; set; }
 
     public static string Prefix => "rate_";
 }

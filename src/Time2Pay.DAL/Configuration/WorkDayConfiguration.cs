@@ -23,6 +23,8 @@ public class WorkDayConfiguration : IEntityTypeConfiguration<WorkDay>
 
         builder.Property(day => day.DayType).HasConversion<string>();
 
+        builder.HasQueryFilter(day => !day.Employment.IsDeleted);
+
         builder.ToTable(table =>
         {
             table.HasCheckConstraint(Constants.WorkDaysDayTypeIsValidConstraintName,

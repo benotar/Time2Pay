@@ -22,18 +22,18 @@ public sealed class EmploymentsController : BaseController
     [HttpGet("{id}")]
     public async Task<ActionResult<EmploymentModel>> Get(string id, CancellationToken cancellationToken)
     {
-        var result = await _employmentService.GetEmploymentAsync(UserId, id, cancellationToken);
+        var result = await _employmentService.GetByIdAsync(UserId, id, cancellationToken);
 
         return result.Match(model => Ok(model), ToProblem);
     }
 
     [HttpGet]
-    public async Task<ActionResult<PaginationResult<EmploymentModel>>> GetCollection([FromQuery] EmploymentsQueryParameters query,
+    public async Task<ActionResult<PaginationResult<EmploymentModel>>> GetCollection([FromQuery] CommonQueryParameters query,
         CancellationToken cancellationToken)
     {
-        var result = await _employmentService.GetEmploymentsAsync(UserId, query, cancellationToken);
+        var result = await _employmentService.GetAsync(UserId, query, cancellationToken);
 
-        return result.Match(model => Ok(model), ToProblem);
+        return result.Match(models => Ok(models), ToProblem);
     }
 
     [HttpPost]

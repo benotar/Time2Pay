@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Time2Pay.DAL.Entities;
 using Time2Pay.DAL.Utils;
-using Time2Pay.DTO.WorkDay;
+using Time2Pay.DTO.WorkDays;
 
 namespace Time2Pay.BLL.Mapping.WorkDays;
 
@@ -34,12 +34,12 @@ public static class WorkDayMapping
         return CompiledProjection(entity);
     }
 
-    public static WorkDay ToEntity(this CreateWorkDayModel model)
+    public static WorkDay ToEntity(this CreateWorkDayModel model, string employmentId)
     {
         return new WorkDay
         {
             Id = IdGenerator.PrefixId<WorkDay>(),
-            EmploymentId = model.EmploymentId,
+            EmploymentId = employmentId,
             Date = model.Date,
             DayType = model.DayType,
             StartedAt = model.StartedAt,

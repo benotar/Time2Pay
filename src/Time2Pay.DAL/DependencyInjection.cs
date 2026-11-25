@@ -81,6 +81,7 @@ public static class DependencyInjection
                 static Employment CreateEmployment() => new Employment
                 {
                     Id = IdGenerator.PrefixId<Employment>(),
+                    UserId = string.Empty,
                     Name = employmentName,
                     Description = "Test Employment for seeding",
                     StartDate = new DateOnly(2026, 10, 4),

@@ -6,9 +6,9 @@ namespace Time2Pay.BLL.Services.Interfaces;
 
 public interface IEmploymentService
 {
-    Task<Result<EmploymentModel>> GetEmploymentAsync(string userId, string id, CancellationToken cancellationToken);
+    Task<Result<EmploymentModel>> GetByIdAsync(string userId, string id, CancellationToken cancellationToken);
 
-    Task<Result<PaginationResult<EmploymentModel>>> GetEmploymentsAsync(string userId, EmploymentsQueryParameters query,
+    Task<Result<PaginationResult<EmploymentModel>>> GetAsync(string userId, CommonQueryParameters query,
         CancellationToken cancellationToken);
 
     Task<Result<EmploymentModel>> CreateAsync(string userId, CreateEmploymentModel model, CancellationToken cancellationToken);

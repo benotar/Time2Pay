@@ -4,7 +4,7 @@ namespace Time2Pay.BLL.Utils;
 
 public sealed record ValidationViolation : Error
 {
-    public ValidationViolation(ValidationViolationItem[] items)
+    private ValidationViolation(ValidationViolationItem[] items)
         : base("Validation.General", "One or more validation violations occurred", ErrorType.Validation)
     {
         Items = items;

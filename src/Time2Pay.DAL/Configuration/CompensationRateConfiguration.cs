@@ -19,6 +19,8 @@ public class CompensationRateConfiguration : IEntityTypeConfiguration<Compensati
 
         builder.Property(rate => rate.Currency).HasConversion<string>();
 
+        builder.HasQueryFilter(rate => !rate.Employment.IsDeleted);
+
         builder.ToTable(table =>
         {
             table.HasCheckConstraint(Constants.CompensationRatesRateTypeIsValidConstraintName,
@@ -28,7 +30,7 @@ public class CompensationRateConfiguration : IEntityTypeConfiguration<Compensati
                 Constants.CompensationRatesCurrencyIsValidConstraint);
         });
 
-        builder.HasOne<Employment>()
+        builder.HasOne<Employment>(rate => rate.Employment)
             .WithMany()
             .HasForeignKey(rate => rate.EmploymentId)
             .OnDelete(DeleteBehavior.Restrict);
