@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Time2Pay.DTO.Common;
 
-namespace Time2Pay.DTO.Employments;
+namespace Time2Pay.DTO.Common;
 
-public sealed record EmploymentsQueryParameters : IQueryParameters
+public sealed record CommonQueryParameters : IQueryParameters
 {
     [FromQuery(Name = "q")] public string? Search { get; init; }
 

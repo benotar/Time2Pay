@@ -1,6 +1,6 @@
 ﻿using Time2Pay.Shared.Enums;
 
-namespace Time2Pay.DTO.WorkDay;
+namespace Time2Pay.DTO.WorkDays;
 
 public sealed record WorkDayModel
 {
